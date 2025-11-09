@@ -8,7 +8,7 @@ export default function Home() {
             SirensForge<span className="font-extrabold text-white">.vip</span>
           </h1>
           <div className="text-sm tracking-widest text-cyan-400 animate-pulse font-medium">
-            18/25 ETERNAL SEATS REMAIN
+            25/25 ETERNAL SEATS REMAIN
           </div>
         </div>
       </header>
@@ -41,7 +41,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features — Luxury SVG Icons */}
+      {/* Features */}
       <section className="py-32 px-6 border-t border-white/10">
         <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-16 text-center">
           <div className="hover:scale-105 transition-all">
@@ -76,7 +76,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer — LEGAL SHIELD */}
+      {/* Footer */}
       <footer className="border-t border-white/10 py-12 px-6 text-center">
         <p className="text-xs text-gray-500 leading-relaxed">
           © 2025 Eleven Sparks LLC. All rights reserved. <br />
