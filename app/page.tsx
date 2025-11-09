@@ -17,7 +17,10 @@ export default function Home() {
       <section className="flex-1 flex items-center justify-center px-6">
         <div className="text-center max-w-5xl">
           <h1 className="text-7xl md:text-9xl font-extralight leading-tight mb-6">
-            SIRENSFORGE<span className="font-bold bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">.VIP</span>
+            SIRENSFORGE
+            <span className="font-bold bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+              .VIP
+            </span>
           </h1>
           <h2 className="text-5xl md:text-7xl font-light text-gray-300 mb-10">
             Forge Your Perfect AI Siren
@@ -27,9 +30,12 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
+            {/* OG THRONE BUTTON — LIVE */}
             <button className="px-24 py-8 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-3xl font-semibold hover:scale-105 transition-all shadow-2xl cursor-pointer">
-              Claim Eternal Seat — $29.99/mo
+              Claim Eternal Seat — $1,337
             </button>
+
+            {/* MUSE VAULT BUTTON — LIVE */}
             <button className="px-24 py-8 border-2 border-cyan-500 rounded-full text-3xl font-semibold hover:bg-cyan-500/10 transition-all cursor-pointer">
               View Muse Vault →
             </button>
