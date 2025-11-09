@@ -44,7 +44,7 @@ export default function Home() {
           <div>
             <div className="text-5xl mb-4">🎯</div>
             <h3 className="text-xl font-medium mb-2">Face-Lock Precision</h3>
-            <p class ofName="text-gray-400 text-sm">15-second multi-ref video forge</p>
+            <p className="text-gray-400 text-sm">15-second multi-ref video forge</p>
           </div>
           <div>
             <div className="text-5xl mb-4">💸</div>
