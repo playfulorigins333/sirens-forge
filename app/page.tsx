@@ -29,13 +29,15 @@ export default function Home() {
             Hyper-realistic custom models · 100% private · auto-post to Fanvue · $10k+/week on autopilot
           </p>
 
+          {/* LIVE BUTTONS — $29.99 LURE → REAL $1,3333 OG THRONE */}
           <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
-            {/* OG THRONE BUTTON — LIVE */}
-            <button className="px-24 py-8 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-3xl font-semibold hover:scale-105 transition-all shadow-2xl cursor-pointer">
-              Claim Eternal Seat — $1,337
-            </button>
+            <a
+              href="https://sirensforge.lemonsqueezy.com/checkout/buy/PUT-YOUR-OG-PRODUCT-ID-HERE"
+              className="px-24 py-8 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-3xl font-semibold hover:scale-105 transition-all shadow-2xl cursor-pointer"
+            >
+              Claim Eternal Seat — $29.99/mo
+            </a>
 
-            {/* MUSE VAULT BUTTON — LIVE */}
             <button className="px-24 py-8 border-2 border-cyan-500 rounded-full text-3xl font-semibold hover:bg-cyan-500/10 transition-all cursor-pointer">
               View Muse Vault →
             </button>
@@ -96,4 +98,3 @@ export default function Home() {
     </div>
   )
 }
- 
