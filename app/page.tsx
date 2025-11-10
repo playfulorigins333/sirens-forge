@@ -79,7 +79,7 @@ export default function Home() {
             <p className="text-gray-400 text-sm leading-relaxed">15-second multi-ref video forge</p>
           </div>
           <div className="hover:scale-105 transition-all">
-            <svg className="w-20 h-20 mx-auto mb-6 stroke-purple-400 fill-none stroke-2" viewBox="0 0 24 24">
+            <svg className="w-20 h-20 '{}' mx-auto mb-6 stroke-purple-400 fill-none stroke-2" viewBox="0 0 24 24">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
             </svg>
             <h3 className="text-2xl font-medium mb-3">Auto-Post Empire</h3>
