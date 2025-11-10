@@ -1,11 +1,13 @@
 'use client';
+
 import useSWR from 'swr';
+import { useState } from 'react';
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 function LiveCounter() {
   const { data } = useSWR('/api/counters', fetcher, { refreshInterval: 3000 });
-  
+
   const earlyMonthly = data?.early_monthly_sold || 0;
   const earlyLifetime = data?.early_lifetime_sold || 0;
   const ogThrone = data?.og_throne_sold || 0;
@@ -15,6 +17,16 @@ function LiveCounter() {
       EARLY BIRDS: {120 - earlyMonthly}/120 | LIFETIMES: {50 - earlyLifetime}/50 | THRONES: {10 - ogThrone}/10
     </div>
   );
+}
+
+async function buy(priceId: string, tier: string) {
+  const res = await fetch('/api/create-checkout', {
+    method: 'POST',
+    body: JSON.stringify({ priceId, tier }),
+    headers: { 'Content-Type': 'application/json' },
+  });
+  const { url } = await res.json();
+  window.location.href = url;
 }
 
 export default function Home() {
@@ -34,31 +46,46 @@ export default function Home() {
       <section className="flex-1 flex items-center justify-center px-6">
         <div className="text-center max-w-5xl">
           <h1 className="text-7xl md:text-9xl font-extralight leading-tight mb-6">
-            SIRENSFORGE
+            SIRENSFORGE<br />
             <span className="font-bold bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-              .VIP
+              .VIP<br />
             </span>
           </h1>
           <h2 className="text-5xl md:text-7xl font-light text-gray-300 mb-10">
-            Forge Your Perfect AI Siren
+            Forge Your Perfect AI Siren<br />
           </h2>
           <p className="text-xl md:text-2xl text-gray-400 mb-16 leading-relaxed max-w-3xl mx-auto">
             Hyper-realistic custom models · 100% private · auto-post to Fanvue · $10k+/week on autopilot
           </p>
 
-          {/* FINAL LURE BUTTON — FULL LEMON CHECKOUT MENU — ALL 11 TIERS — ZERO 404 */}
+          {/* STRIPE BUTTONS — FULL 11-TIER MENU — ZERO 404 — LIVE MONEY */}
           <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
-            <a
-              href="https://sirensforge.lemonsqueezy.com/checkout"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-24 py-8 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-3xl font-semibold hover:scale-105 transition-all shadow-2xl cursor-pointer"
+            <button
+              onClick={() => buy('price_1YOUR_STARTER_ID', 'Starter Hit')}
+              className="px-24 py-8 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-3xl font-semibold hover:scale-105 transition-all shadow-2xl"
+            >
+              $12 Starter Hit — 5 Gen Only
+            </button>
+
+            <button
+              onClick={() => buy('price_1YOUR_ETERNAL_ID', 'Eternal Seat')}
+              className="px-24 py-8 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-3xl font-semibold hover:scale-105 transition-all shadow-2xl"
             >
               Claim Eternal Seat — $29.99/mo
-            </a>
+            </button>
 
-            <button className="px-24 py-8 border-2 border-cyan-500 rounded-full text-3xl font-semibold hover:bg-cyan-500/10 transition-all cursor-pointer">
-              View Muse Vault →
+            <button
+              onClick={() => buy('price_1YOUR_LIFETIME_ID', 'Lifetime')}
+              className="px-24 py-8 border-2 border-cyan-500 rounded-full text-3xl font-semibold hover:bg-cyan-500/10 transition-all"
+            >
+              Lifetime Early Bird — $97
+            </button>
+
+            <button
+              onClick={() => buy('price_1YOUR_THRONE_ID', 'Throne')}
+              className="px-24 py-8 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-full text-3xl font-semibold hover:scale-105 transition-all shadow-2xl"
+            >
+              Claim Throne — $497
             </button>
           </div>
 
@@ -80,7 +107,7 @@ export default function Home() {
             <p className="text-gray-400 text-sm leading-relaxed">15-second multi-ref video forge</p>
           </div>
           <div className="hover:scale-105 transition-all">
-            <svg className="w-20 h-20 '{}' mx-auto mb-6 stroke-purple-400 fill-none stroke-2" viewBox="0 0 24 24">
+            <svg className="w-20 h-20 mx-auto mb-6 stroke-purple-400 fill-none stroke-2" viewBox="0 0 24 24">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
             </svg>
             <h3 className="text-2xl font-medium mb-3">Auto-Post Empire</h3>
@@ -106,7 +133,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-white/10 py-12 px-6 text-center">
         <p className="text-xs text-gray-500 leading-relaxed">
-          © 2025 Eleven Sparks LLC. All rights reserved. <br />
+          © 2025 Eleven Sparks LLC. All rights reserved. <br /><br />
           By using SirensForge.vip you agree to our{' '}
           <a href="/tos" className="underline hover:text-cyan-400">Terms of Service</a> ·{' '}
           <a href="/privacy" className="underline hover:text-cyan-400">Privacy Policy</a> ·{' '}
@@ -115,5 +142,5 @@ export default function Home() {
         </p>
       </footer>
     </div>
-  )
+  );
 }
