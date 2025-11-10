@@ -1,15 +1,31 @@
+import useSWR from 'swr';
+
+const fetcher = (url: string) => fetch(url).then(r => r.json());
+
+function LiveCounter() {
+  const { data } = useSWR('/api/counters', fetcher, { refreshInterval: 3000 });
+  
+  const earlyMonthly = data?.early_monthly_sold || 0;
+  const earlyLifetime = data?.early_lifetime_sold || 0;
+  const ogThrone = data?.og_throne_sold || 0;
+
+  return (
+    <div className="text-sm tracking-widest text-cyan-400 animate-pulse font-medium">
+      EARLY BIRDS: {120 - earlyMonthly}/120 | LIFETIMES: {50 - earlyLifetime}/50 | THRONES: {10 - ogThrone}/10
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Header */}
       <header className="border-b border-white/10 backdrop-blur-xl bg-black/80 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-          <h1 className="text-4xl font-bold tracking-wider bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold tracking-widest bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
             SirensForge<span className="font-extrabold text-white">.vip</span>
           </h1>
-          <div className="text-sm tracking-widest text-cyan-400 animate-pulse font-medium">
-            25/25 ETERNAL SEATS REMAIN
-          </div>
+          <LiveCounter />
         </div>
       </header>
 
@@ -29,10 +45,12 @@ export default function Home() {
             Hyper-realistic custom models · 100% private · auto-post to Fanvue · $10k+/week on autopilot
           </p>
 
-          {/* LIVE BUTTONS — $29.99 LURE → REAL $1,3333 OG THRONE */}
+          {/* $29.99 LURE → FULL LEMON MENU (ALL TIERS) */}
           <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
             <a
-              href="https://sirensforge.lemonsqueezy.com/checkout/buy/PUT-YOUR-OG-PRODUCT-ID-HERE"
+              href="https://sirensforge.lemonsqueezy.com/checkout"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-24 py-8 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-3xl font-semibold hover:scale-105 transition-all shadow-2xl cursor-pointer"
             >
               Claim Eternal Seat — $29.99/mo
