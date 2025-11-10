@@ -45,7 +45,7 @@ export default function Home() {
             Hyper-realistic custom models · 100% private · auto-post to Fanvue · $10k+/week on autopilot
           </p>
 
-          {/* $29.99 LURE → FULL LEMON CHECKOUT MENU (ALL 11 TIERS) */}
+          {/* FINAL LURE BUTTON — FULL LEMON CHECKOUT MENU — ALL 11 TIERS — ZERO 404 */}
           <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
             <a
               href="https://sirensforge.lemonsqueezy.com/checkout"
