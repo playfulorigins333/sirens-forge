@@ -1,1 +1,1 @@
-{ "buildCommand": "npm run build", "framework": "next", "regions": ["iad1"] } 
+{ "builds": [{ "src": "app/**", "use": "@vercel/next" }], "routes": [{ "src": "/(.*)", "dest": "/app/$1" }] } 
