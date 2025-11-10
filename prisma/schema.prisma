@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  refCode         String    @unique
+  referredBy      String?   
+  createdAt       DateTime  @default(now())
+  stripeAccountId String?
+  commissions     Commission[]
+  referredUsers   User[]    @relation("Referrals")
+
+  // This is the missing opposite side
+  referrer        User?     @relation("Referrals", fields: [referredBy], references: [refCode])
+
+  @@map("users")
+}
+
+model Commission {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  amount      Float
+  saleId      String
+  type        String   // og | early | standard | muse-kickback
+  paid        Boolean  @default(false)
+  saleDate    DateTime @default(now())
+  paidAt      DateTime?
+  expiresAt   DateTime
+
+  @@map("commissions")
+}
