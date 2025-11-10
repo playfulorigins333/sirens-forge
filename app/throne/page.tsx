@@ -1,12 +1,15 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 
-export default function ThronePage() {
+export default function Page() {
   const [earnings, setEarnings] = useState(0);
   const [countdown, setCountdown] = useState('');
 
   useEffect(() => {
-    fetch('/api/earnings').then(r => r.json()).then(d => setEarnings(d.total));
+    fetch('/api/earnings')
+      .then(r => r.json())
+      .then(d => setEarnings(d.total || 0));
 
     const timer = setInterval(() => {
       const now = new Date();
@@ -25,10 +28,10 @@ export default function ThronePage() {
   }, []);
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: 'linear-gradient(135deg, #1a0033, #000)', 
-      color: '#ff00aa', 
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #1a0033, #000)',
+      color: '#ff00aa',
       fontFamily: 'monospace',
       textAlign: 'center',
       paddingTop: '10vh'
