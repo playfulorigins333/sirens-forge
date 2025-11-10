@@ -9,12 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
     "cookie": "^0.6.0",
     "next": "14.0.3",
     "react": "^18",
     "react-dom": "^18",
-    "swr": "^2.2.5",
-    "@supabase/supabase-js": "^2.45.4"
+    "swr": "^2.2.5"
   },
   "devDependencies": {
     "@types/cookie": "^0.6.0",
