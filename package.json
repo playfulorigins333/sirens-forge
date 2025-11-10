@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-protect-page",
+  "name": "sirens-forge",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,7 +12,9 @@
     "cookie": "^0.6.0",
     "next": "14.0.3",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "swr": "^2.2.5",
+    "@supabase/supabase-js": "^2.45.4"
   },
   "devDependencies": {
     "@types/cookie": "^0.6.0",
