@@ -126,7 +126,7 @@ export default function PricingPage() {
                 {item.icon}
               </div>
             </div>
-            <h4 className="text-2xl font-bold text-white drop-shadow-md">{item.title}</h4>
+            <h4 className="text-2xl font-bold text-white drop-shadow-md">{item.icon}</h4>
             <p className="text-gray-400 mt-2">{item.desc}</p>
           </div>
         ))}
