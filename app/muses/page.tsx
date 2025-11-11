@@ -32,12 +32,13 @@ export default function MusesPage() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-12 max-w-7xl mx-auto">
-        {/* VAULT STARTER */}
+        {/* TEST VAULT STARTER */}
         <div className="group relative">
           <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl blur-xl opacity-70 group-hover:opacity-100 transition"></div>
           <div className="relative bg-black border border-cyan-500/50 p-10 rounded-3xl text-center">
             <h3 className="text-3xl font-bold text-cyan-400">Vault Starter</h3>
-            <p className="text-5xl font-black mt-4">$299.99</p>
+            <p className="text-5xl font-black mt-4">$0.01</p>
+            <p className="text-xs text-gray-500">(Test Mode)</p>
             <ul className="mt-6 text-left text-gray-300 space-y-2 text-sm">
               <li>✓ 1 Pre-Built Vault Muse</li>
               <li>✓ 20×4K Images</li>
@@ -46,20 +47,21 @@ export default function MusesPage() {
               <li>✓ R2 Instant Delivery</li>
             </ul>
             <button
-              onClick={() => checkout('price_1SSHrTFjcWRhhOnzO4GoeACt', 'Vault Starter')}
+              onClick={() => checkout('price_1SSIUtFjcWRhhOnz6LPI4KhH', 'Test Vault Starter')}
               className="mt-8 w-full bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-bold py-4 rounded-full"
             >
-              Buy Starter
+              Buy Starter (Test)
             </button>
           </div>
         </div>
 
-        {/* VAULT PRO */}
+        {/* TEST VAULT PRO */}
         <div className="group relative">
           <div className="absolute -inset-2 bg-gradient-to-r from-purple-500 to-pink-600 rounded-3xl blur-xl opacity-70 group-hover:opacity-100 transition"></div>
           <div className="relative bg-black border border-purple-500/50 p-10 rounded-3xl text-center">
             <h3 className="text-3xl font-bold text-purple-400">Vault Pro</h3>
-            <p className="text-5xl font-black mt-4">$599.99</p>
+            <p className="text-5xl font-black mt-4">$0.01</p>
+            <p className="text-xs text-gray-500">(Test Mode)</p>
             <ul className="mt-6 text-left text-gray-300 space-y-2 text-sm">
               <li>✓ 1 Pre-Built Vault Muse</li>
               <li>✓ 42×4K Images</li>
@@ -69,20 +71,21 @@ export default function MusesPage() {
               <li>✓ Weekly AI Updates</li>
             </ul>
             <button
-              onClick={() => checkout('price_1SSHrwFjcWRhhOnzJWKmeLpz', 'Vault Pro')}
+              onClick={() => checkout('price_1SSIVMFjcWRhhOnzITeAPY44', 'Test Vault Pro')}
               className="mt-8 w-full bg-gradient-to-r from-purple-400 to-pink-500 text-black font-bold py-4 rounded-full"
             >
-              Buy Pro
+              Buy Pro (Test)
             </button>
           </div>
         </div>
 
-        {/* VAULT ELITE */}
+        {/* TEST VAULT ELITE */}
         <div className="group relative">
           <div className="absolute -inset-3 bg-gradient-to-r from-yellow-600 to-amber-700 rounded-3xl blur-2xl opacity-90 group-hover:opacity-100 transition animate-pulse"></div>
           <div className="relative bg-gradient-to-br from-amber-900/90 to-black p-10 rounded-3xl text-center ring-4 ring-yellow-500/50">
             <h3 className="text-3xl font-bold text-yellow-400">Vault Elite</h3>
-            <p className="text-5xl font-black mt-4">$999.99</p>
+            <p className="text-5xl font-black mt-4">$0.01</p>
+            <p className="text-xs text-gray-500">(Test Mode)</p>
             <ul className="mt-6 text-left text-gray-200 space-y-2 text-sm">
               <li>✓ 1 Pre-Built Vault Muse</li>
               <li>✓ 100×4K Images</li>
@@ -91,10 +94,10 @@ export default function MusesPage() {
               <li>✓ Full Muse Agency (4x/mo)</li>
             </ul>
             <button
-              onClick={() => checkout('price_1SSHtNFjcWRhhOnzoGLxbUDv', 'Vault Elite')}
+              onClick={() => checkout('price_1SSIVjFjcWRhhOnzd6bLzBrJ', 'Test Vault Elite')}
               className="mt-8 w-full bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-bold py-5 rounded-full"
             >
-              Buy Elite
+              Buy Elite (Test)
             </button>
           </div>
         </div>
