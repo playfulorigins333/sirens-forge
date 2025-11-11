@@ -15,17 +15,21 @@ export default function PricingPage() {
         body: JSON.stringify({ priceId }),
       });
 
-      if (!res.ok) throw new Error('Failed to create session');
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Stripe error:', errorText);
+        throw new Error(`Server error: ${res.status}`);
+      }
 
       const { url } = await res.json();
       if (url) {
         window.location.href = url;
       } else {
-        throw new Error('No redirect URL');
+        throw new Error('No redirect URL from Stripe');
       }
-    } catch (error) {
-      console.error('Checkout error:', error);
-      alert(`Checkout failed for ${name}. Please try again.`);
+    } catch (error: any) {
+      console.error('Checkout failed:', error);
+      alert(`Checkout failed for ${name}: ${error.message || 'Please try again.'}`);
       setLoading(null);
     }
   };
@@ -51,7 +55,7 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* PRICING CARDS — IMPROVED LAYOUT */}
+      {/* PRICING CARDS */}
       <div className="grid md:grid-cols-3 gap-12 max-w-7xl mx-auto px-6">
         {/* $12 */}
         <div className="group relative">
@@ -91,7 +95,7 @@ export default function PricingPage() {
           </button>
         </div>
 
-        {/* $1,333 — OG THRONE */}
+        {/* $1,333 */}
         <div className="group relative">
           <div className="absolute -inset-3 bg-gradient-to-r from-yellow-600 via-amber-500 to-yellow-700 rounded-3xl blur-2xl opacity-90 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
           <button
