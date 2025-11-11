@@ -13,7 +13,7 @@ export default function Countdown({ type }: CountdownProps) {
   useEffect(() => {
     if (count <= 0) return;
 
-    const key = siren_countdown_;
+    const key = `siren_countdown_${type}`;
     const saved = localStorage.getItem(key);
     const now = Date.now();
 
@@ -45,9 +45,9 @@ export default function Countdown({ type }: CountdownProps) {
     : 'Lifetime Seats Left';
 
   return (
-    <div className={g-gradient-to-r  text-white font-bold py-3 px-6 rounded-full text-lg animate-pulse shadow-lg inline-block}>
+    <div className={`bg-gradient-to-r ${bg} text-white font-bold py-3 px-6 rounded-full text-lg animate-pulse shadow-lg inline-block`}>
       <span>{count}</span>
-      <span className=\"text-sm ml-2\">/ {max} {label}</span>
+      <span className="text-sm ml-2">/ {max} {label}</span>
     </div>
   );
 }
