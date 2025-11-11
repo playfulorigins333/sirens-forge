@@ -1,1 +1,24 @@
-import { stripe } from '@/lib/stripe'; import { NextResponse } from 'next/server'; export async function POST() { try { const session = await stripe.checkout.sessions.create({ mode: 'subscription', payment_method_types: ['card'], line_items: [{ price: 'price_1SRxiNFjcWRhhOnzHVXW0cYi', quantity: 1 }], success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}`, cancel_url: `${process.env.NEXT_PUBLIC_URL}/checkout` }); return NextResponse.json({ id: session.id }); } catch (error: any) { return NextResponse.json({ error: error.message }, { status: 500 }); } } 
+﻿import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-06-20',
+});
+
+export async function POST(req: NextRequest) {
+  try {
+    const { priceId } = await req.json();
+
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      payment_method_types: ['card'],
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: ${req.headers.get('origin')}/success?session_id={CHECKOUT_SESSION_ID},
+      cancel_url: ${req.headers.get('origin')}/pricing,
+    });
+
+    return NextResponse.json({ url: session.url });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
