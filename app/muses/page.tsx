@@ -14,10 +14,21 @@ export default function MusesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ priceId }),
       });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Stripe error: ${res.status} - ${errorText}`);
+      }
+
       const { url } = await res.json();
-      if (url) window.location.href = url;
-    } catch {
-      alert('Checkout failed');
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error('No redirect URL from Stripe');
+      }
+    } catch (error: any) {
+      console.error('Checkout failed:', error);
+      alert(`Checkout failed for ${name}: ${error.message}`);
       setLoading(null);
     }
   };
@@ -48,9 +59,10 @@ export default function MusesPage() {
             </ul>
             <button
               onClick={() => checkout('price_1SSIUtFjcWRhhOnz6LPI4KhH', 'Test Vault Starter')}
-              className="mt-8 w-full bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-bold py-4 rounded-full"
+              disabled={loading === 'price_1SSIUtFjcWRhhOnz6LPI4KhH'}
+              className="mt-8 w-full bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-bold py-4 rounded-full disabled:opacity-50"
             >
-              Buy Starter (Test)
+              {loading === 'price_1SSIUtFjcWRhhOnz6LPI4KhH' ? 'Loading...' : 'Buy Starter (Test)'}
             </button>
           </div>
         </div>
@@ -72,9 +84,10 @@ export default function MusesPage() {
             </ul>
             <button
               onClick={() => checkout('price_1SSIVMFjcWRhhOnzITeAPY44', 'Test Vault Pro')}
-              className="mt-8 w-full bg-gradient-to-r from-purple-400 to-pink-500 text-black font-bold py-4 rounded-full"
+              disabled={loading === 'price_1SSIVMFjcWRhhOnzITeAPY44'}
+              className="mt-8 w-full bg-gradient-to-r from-purple-400 to-pink-500 text-black font-bold py-4 rounded-full disabled:opacity-50"
             >
-              Buy Pro (Test)
+              {loading === 'price_1SSIVMFjcWRhhOnzITeAPY44' ? 'Loading...' : 'Buy Pro (Test)'}
             </button>
           </div>
         </div>
@@ -95,9 +108,10 @@ export default function MusesPage() {
             </ul>
             <button
               onClick={() => checkout('price_1SSIVjFjcWRhhOnzd6bLzBrJ', 'Test Vault Elite')}
-              className="mt-8 w-full bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-bold py-5 rounded-full"
+              disabled={loading === 'price_1SSIVjFjcWRhhOnzd6bLzBrJ'}
+              className="mt-8 w-full bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-bold py-5 rounded-full disabled:opacity-50"
             >
-              Buy Elite (Test)
+              {loading === 'price_1SSIVjFjcWRhhOnzd6bLzBrJ' ? 'Loading...' : 'Buy Elite (Test)'}
             </button>
           </div>
         </div>
