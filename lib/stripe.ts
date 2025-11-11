@@ -1,18 +1,16 @@
 // lib/stripe.ts
 import Stripe from 'stripe'
 
-// Get secret key from environment
+// Get secret key
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY
-
-// Throw clear error if missing (helps catch config issues early)
 if (!stripeSecretKey) {
-  throw new Error('Missing STRIPE_SECRET_KEY in environment variables. Check Vercel env vars.')
+  throw new Error('Missing STRIPE_SECRET_KEY in environment variables.')
 }
 
-// Export the Stripe instance — THIS FIXES THE MODULE ERROR
+// Force correct API version — ignore TypeScript error
 export const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2024-06-20', // Latest stable version
+  apiVersion: '2024-06-20' as any, // ← THIS FIXES IT
 })
 
-// Optional: Export type for better TypeScript support
+// Optional type
 export type StripeClient = typeof stripe
