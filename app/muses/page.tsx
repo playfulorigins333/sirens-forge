@@ -46,7 +46,7 @@ export default function MusesPage() {
               <li>✓ R2 Instant Delivery</li>
             </ul>
             <button
-              onClick={() => checkout('price_1STARTER_ID', 'Vault Starter')}
+              onClick={() => checkout('price_1SSHrTFjcWRhhOnzO4GoeACt', 'Vault Starter')}
               className="mt-8 w-full bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-bold py-4 rounded-full"
             >
               Buy Starter
@@ -69,7 +69,7 @@ export default function MusesPage() {
               <li>✓ Weekly AI Updates</li>
             </ul>
             <button
-              onClick={() => checkout('price_1PRO_ID', 'Vault Pro')}
+              onClick={() => checkout('price_1SSHrwFjcWRhhOnzJWKmeLpz', 'Vault Pro')}
               className="mt-8 w-full bg-gradient-to-r from-purple-400 to-pink-500 text-black font-bold py-4 rounded-full"
             >
               Buy Pro
@@ -91,7 +91,7 @@ export default function MusesPage() {
               <li>✓ Full Muse Agency (4x/mo)</li>
             </ul>
             <button
-              onClick={() => checkout('price_1ELITE_ID', 'Vault Elite')}
+              onClick={() => checkout('price_1SSHtNFjcWRhhOnzoGLxbUDv', 'Vault Elite')}
               className="mt-8 w-full bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-bold py-5 rounded-full"
             >
               Buy Elite
