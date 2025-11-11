@@ -13,8 +13,8 @@ export async function POST(req: NextRequest) {
       mode: 'subscription',
       payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: ${req.headers.get('origin')}/success?session_id={CHECKOUT_SESSION_ID},
-      cancel_url: ${req.headers.get('origin')}/pricing,
+      success_url: ${'$'}{req.headers.get('origin')}/success?session_id={CHECKOUT_SESSION_ID},
+      cancel_url: ${'$'}{req.headers.get('origin')}/pricing,
     });
 
     return NextResponse.json({ url: session.url });
