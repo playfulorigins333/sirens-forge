@@ -15,7 +15,17 @@ interface Message {
 
 export default function GeneratePage() {
   const [prompt, setPrompt] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: 'assistant',
+      content: `I understand vault commands. Try:
+• What is in vault 13?
+• Build me with vault 5-10-25
+• Use only bondage
+• Surprise me with 3 NSFW vaults`,
+      ready: false
+    }
+  ]);
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState('No file chosen');
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -36,9 +46,16 @@ export default function GeneratePage() {
       });
       const data = await res.json();
 
+      // CLEAN ANY LEFTOVER HTML
+      const cleanReply = data.reply
+        .replace(/&quot;/g, '"')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>');
+
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: data.reply,
+        content: cleanReply,
         ready: data.ready
       }]);
     } catch {
@@ -65,17 +82,12 @@ export default function GeneratePage() {
 
         {/* Floating Hint */}
         <div className="fixed top-8 right-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-          show me vault 25
+          what is in vault 13
         </div>
 
         {/* Chat */}
         <div className="bg-gradient-to-b from-gray-900 to-black rounded-3xl p-6 border border-cyan-500/30 shadow-2xl backdrop-blur-xl">
-          < ScrollArea className="h-96 pr-4 mb-4">
-            {messages.length === 0 && (
-              <div className="text-center text-gray-500 mt-10">
-                <p className="text-lg font-bold text-cyan-400">Ask me to build, stack, or reveal vaults...</p>
-              </div>
-            )}
+          <ScrollArea className="h-96 pr-4 mb-4">
             {messages.map((m, i) => (
               <div key={i} className={`mb-6 flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`
