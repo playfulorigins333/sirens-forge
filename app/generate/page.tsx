@@ -48,18 +48,20 @@ export default function GeneratePage() {
       });
       const data = await res.json();
 
+      // FORCE CLEAN — NO HTML ENTITIES
       const cleanReply = data.reply
         .replace(/&quot;/g, '"')
         .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
-        .replace(/&#39;/g, "'");
+        .replace(/&#39;/g, "'")
+        .replace(/&ldquo;/g, '"')
+        .replace(/&rdquo;/g, '"');
 
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: cleanReply,
-        ready: data.ready,
-        prompt: data.prompt
+        ready: data.ready
       }]);
 
       if (data.ready) {
@@ -177,7 +179,7 @@ export default function GeneratePage() {
         {generatedImage && (
           <div className="mt-12 text-center">
             <h2 className="text-5xl font-bold bg-gradient-to-r from-cyan-400 via-pink-400 to-purple-400 bg-clip-text text-transparent mb-8">
-              SIREN FORGED
+              Sb SIREN FORGED
             </h2>
             <div className="relative inline-block group perspective-1000">
               <div className="relative w-96 h-[512px] mx-auto transform-gpu transition-all duration-500 group-hover:rotate-y-12 group-hover:scale-105">
