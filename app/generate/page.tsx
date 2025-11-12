@@ -133,6 +133,7 @@ export default function GeneratePage() {
 
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
+      {/* HERO */}
       <div className="text-center mb-12">
         <h1 className="text-5xl md:text-7xl font-bold uppercase bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent tracking-widest">
           SIRENS FORGE
@@ -162,6 +163,7 @@ export default function GeneratePage() {
         )}
       </div>
 
+      {/* TABS */}
       <div className="max-w-7xl mx-auto mb-8">
         <div className="flex gap-2 border-b border-gray-700">
           <button
@@ -355,6 +357,18 @@ export default function GeneratePage() {
           </div>
         </div>
       )}
+
+      {/* FOOTER */}
+      <footer className="mt-20 text-center text-sm text-gray-500">
+        <p>© 2025 Eleven Sparks LLC. All rights reserved.</p>
+        <p className="mt-2">
+          By using SirensForge.vip you agree to our{' '}
+          <a href="/terms" className="underline hover:text-cyan-400">Terms of Service</a> ·{' '}
+          <a href="/privacy" className="underline hover:text-cyan-400">Privacy Policy</a> ·{' '}
+          <a href="/faq" className="underline hover:text-cyan-400">FAQ</a> ·{' '}
+          <a href="/dmca" className="underline hover:text-cyan-400">DMCA</a>
+        </p>
+      </footer>
     </div>
   );
 }
