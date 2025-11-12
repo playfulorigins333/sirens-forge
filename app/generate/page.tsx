@@ -16,7 +16,17 @@ interface Message {
 
 export default function GeneratePage() {
   const [prompt, setPrompt] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: 'assistant',
+      content: `I understand vault commands. Try:
+• What is in vault 13?
+• Build me with vault 5-10-25
+• Use only bondage
+• Surprise me with 3 NSFW vaults`,
+      ready: false
+    }
+  ]);
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState('No file chosen');
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -95,12 +105,6 @@ export default function GeneratePage() {
         {/* Chat */}
         <div className="bg-gradient-to-b from-gray-900/50 to-black/50 backdrop-blur-xl rounded-3xl p-6 border border-gradient-to-r from-cyan-500/30 to-pink-500/30 shadow-2xl">
           <ScrollArea className="h-96 pr-4 mb-6">
-            {messages.length === 0 && (
-              <div className="text-center text-gray-500 mt-12">
-                <Sparkles className="w-12 h-12 mx-auto mb-4 text-cyan-400 animate-pulse" />
-                <p className="text-lg font-bold text-cyan-300">Ask me to build, stack, or reveal vaults...</p>
-              </div>
-            )}
             {messages.map((m, i) => (
               <div key={i} className={`mb-6 flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`
