@@ -11,7 +11,6 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   ready?: boolean;
-  prompt?: string;
 }
 
 export default function GeneratePage() {
@@ -48,18 +47,10 @@ export default function GeneratePage() {
       });
       const data = await res.json();
 
-      const cleanReply = data.reply
-        .replace(/&quot;/g, '"')
-        .replace(/&amp;/g, '&')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&#39;/g, "'");
-
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: cleanReply,
-        ready: data.ready,
-        prompt: data.prompt
+        content: data.reply,
+        ready: data.ready
       }]);
 
       if (data.ready) {
@@ -160,3 +151,62 @@ export default function GeneratePage() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={handleKey}
+              placeholder="Ask your AI Siren Forge..."
+              className="flex-1 bg-black/60 border-cyan-500/50 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/30 text-lg py-6"
+              disabled={loading}
+            />
+            <Button
+              onClick={sendMessage}
+              disabled={loading || !prompt.trim()}
+              className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 font-bold text-lg px-8 py-6 rounded-full shadow-lg"
+            >
+              <Send className="w-6 h-6" />
+            </Button>
+          </div>
+
+          {/* File */}
+          <div className="mt-6 flex items-center gap-4">
+            <label>
+              <input
+                type="file"
+                className="hidden"
+                onChange={(e) => setFileName(e.target.files?.[0]?.name || 'No file chosen')}
+              />
+              <Button variant="outline" className="border-cyan-500 text-cyan-400 hover:bg-cyan-500/10 font-bold px-6 py-3 rounded-full">
+                <Upload className="w-5 h-5 mr-2" /> Choose Files
+              </Button>
+            </label>
+            <span className="text-sm text-gray-400">{fileName}</span>
+          </div>
+        </div>
+
+        {/* GENERATED IMAGE */}
+        {generatedImage && (
+          <div className="mt-16 text-center">
+            <h2 className="text-6xl font-bold bg-gradient-to-r from-cyan-400 via-pink-400 to-purple-400 bg-clip-text text-transparent mb-10">
+              SIREN FORGED
+            </h2>
+            <div className="relative inline-block group perspective-1000">
+              <div className="relative w-[512px] h-[768px] mx-auto transform-gpu transition-all duration-700 group-hover:rotate-y-12 group-hover:scale-105">
+                <img
+                  src={generatedImage}
+                  alt="Generated Siren"
+                  className="w-full h-full object-cover rounded-3xl shadow-2xl border-8 border-gradient-to-r from-cyan-500 to-pink-500"
+                />
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-t from-purple-900/70 to-transparent pointer-events-none"></div>
+              </div>
+            </div>
+            <a
+              href={generatedImage}
+              download
+              className="mt-10 inline-flex items-center gap-4 bg-gradient-to-r from-cyan-400 to-pink-500 text-black px-10 py-5 rounded-full font-bold text-xl hover:scale-110 transition shadow-2xl"
+            >
+              <Download className="w-8 h-8" />
+              DOWNLOAD (R2)
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

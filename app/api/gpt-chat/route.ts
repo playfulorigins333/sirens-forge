@@ -33,6 +33,9 @@ Try:
 • Surprise me with 3 NSFW vaults`;
     }
 
+    // FORCE NO &quot; — EVER
+    reply = reply.replace(/"/g, '"');
+
     return NextResponse.json({ reply, ready });
   } catch {
     return NextResponse.json({ error: 'Oracle error' }, { status: 500 });
