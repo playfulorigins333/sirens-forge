@@ -5,6 +5,9 @@ import { useSession, signIn } from 'next-auth/react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 
+// Force dynamic — NO PRERENDER
+export const dynamic = 'force-dynamic';
+
 interface Muse {
   id: string;
   name: string;
@@ -27,7 +30,8 @@ interface PostQueue {
 }
 
 export default function DashboardPage() {
-  const { data: session, status } = useSession();
+  const [session, setSession] = useState<any>(null);
+  const [status, setStatus] = useState<'loading' | 'authenticated' | 'unauthenticated'>('loading');
   const [muses, setMuses] = useState<Muse[]>([]);
   const [queue, setQueue] = useState<PostQueue[]>([]);
   const [analytics, setAnalytics] = useState<any[]>([]);
@@ -38,11 +42,21 @@ export default function DashboardPage() {
   const [showOAuth, setShowOAuth] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<'fanvue' | 'x' | 'instagram' | 'tiktok'>('fanvue');
 
+  // Client-only auth check
   useEffect(() => {
-    if (status === 'authenticated') {
-      fetchDashboard();
-    }
-  }, [status]);
+    const checkAuth = async () => {
+      const res = await fetch('/api/auth/session');
+      const data = await res.json();
+      if (data.user) {
+        setSession(data);
+        setStatus('authenticated');
+        fetchDashboard();
+      } else {
+        setStatus('unauthenticated');
+      }
+    };
+    checkAuth();
+  }, []);
 
   const fetchDashboard = async () => {
     setMuses([
@@ -110,7 +124,7 @@ export default function DashboardPage() {
   };
 
   if (status === 'loading') return <div className="min-h-screen flex items-center justify-center text-white">Loading empire...</div>;
-  if (!session) return <div className="min-h-screen flex items-center justify-center"><button onClick={() => signIn()} className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl">Sign In to Automate</button></div>;
+  if (status === 'unauthenticated') return <div className="min-h-screen flex items-center justify-center"><button onClick={() => signIn()} className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl">Sign In to Automate</button></div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-pink-900 text-white p-6">
