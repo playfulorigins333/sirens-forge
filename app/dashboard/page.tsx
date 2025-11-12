@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession, signIn } from 'next-auth/react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import axios from 'axios';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic';   // prevents static prerender
 
 interface Muse {
   id: string;
@@ -14,7 +14,6 @@ interface Muse {
   platforms: ('fanvue' | 'x' | 'instagram' | 'tiktok')[];
   connected: boolean;
 }
-
 interface PostQueue {
   id: string;
   content: string;
@@ -23,67 +22,94 @@ interface PostQueue {
   status: 'queued' | 'posted' | 'failed';
 }
 
+/* ------------------------------------------------------------------ */
+/*  PAGE COMPONENT                                                    */
+/* ------------------------------------------------------------------ */
 export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null);
+  const { data: session, status } = useSession();
+
   const [muses, setMuses] = useState<Muse[]>([]);
   const [queue, setQueue] = useState<PostQueue[]>([]);
   const [analytics, setAnalytics] = useState<any[]>([]);
   const [showOAuth, setShowOAuth] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<'fanvue' | 'x' | 'instagram' | 'tiktok'>('fanvue');
 
-  // Client-only auth + data load
+  /* -------------------------------------------------------------- */
+  /*  Load data only after client-side auth is ready                */
+  /* -------------------------------------------------------------- */
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await fetch('/api/auth/session');
-        const data = await res.json();
-        if (data.user) {
-          setUser(data.user);
-          loadData();
-        }
-      } catch (err) {
-        console.error('Auth check failed');
-      }
-    };
-    checkAuth();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      const res = await axios.get('/api/dashboard');
-      setMuses(res.data.muses || []);
-      setQueue(res.data.queue || []);
-      setAnalytics(res.data.analytics || []);
-    } catch (err) {
-      console.error('Failed to load dashboard');
+    if (status === 'authenticated') {
+      // ---- mock data (replace with real API later) ----
+      setMuses([
+        {
+          id: '1',
+          name: 'Luna Siren',
+          avatar: '/vaults/luna.jpg',
+          bio: 'Eternal siren of the deep',
+          platforms: ['fanvue', 'x'],
+          connected: true,
+        },
+      ]);
+      setQueue([
+        {
+          id: '1',
+          content: 'New drop from Luna',
+          media: ['/gen/luna1.jpg'],
+          platforms: ['fanvue', 'x'],
+          status: 'queued',
+        },
+      ]);
+      setAnalytics([
+        { day: 'Mon', earnings: 100 },
+        { day: 'Tue', earnings: 150 },
+        { day: 'Wed', earnings: 120 },
+        { day: 'Thu', earnings: 200 },
+        { day: 'Fri', earnings: 180 },
+        { day: 'Sat', earnings: 220 },
+        { day: 'Sun', earnings: 140 },
+      ]);
     }
-  };
+  }, [status]);
 
-  const signIn = (platform: string) => {
-    window.location.href = `/api/auth/signin/${platform}`;
-  };
-
+  /* -------------------------------------------------------------- */
+  /*  Platform connect (OAuth)                                      */
+  /* -------------------------------------------------------------- */
   const connectPlatform = (platform: typeof selectedPlatform) => {
     setSelectedPlatform(platform);
     setShowOAuth(true);
     signIn(platform);
   };
 
-  const queuePost = async (muse: Muse) => {
-    const post = {
+  /* -------------------------------------------------------------- */
+  /*  Queue a post                                                  */
+  /* -------------------------------------------------------------- */
+  const queuePost = (muse: Muse) => {
+    const post: PostQueue = {
+      id: Date.now().toString(),
       content: `${muse.name} just dropped. Link in bio. #SirensForge`,
       media: [muse.avatar],
       platforms: muse.platforms,
+      status: 'queued',
     };
-    await axios.post('/api/queue-post', post);
-    setQueue(prev => [{ ...post, id: Date.now().toString(), status: 'queued' }, ...prev]);
+    setQueue((prev) => [post, ...prev]);
   };
 
-  if (!user) {
+  /* -------------------------------------------------------------- */
+  /*  Render states                                                 */
+  /* -------------------------------------------------------------- */
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-black to-pink-900 text-white text-2xl">
+        Loading empire...
+      </div>
+    );
+  }
+
+  if (!session) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-black to-pink-900">
         <button
-          onClick={() => signIn('google')} // or your provider
+          onClick={() => signIn()}
           className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-bold text-xl transform hover:scale-105 transition-all"
         >
           Sign In to Automate
@@ -92,9 +118,12 @@ export default function DashboardPage() {
     );
   }
 
+  /* -------------------------------------------------------------- */
+  /*  MAIN UI (same luxury style as the rest of the site)           */
+  /* -------------------------------------------------------------- */
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-pink-900 text-white p-6 relative overflow-hidden">
-      {/* Animated Background */}
+      {/* animated blobs */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-10 left-10 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
         <div className="absolute top-40 right-10 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
@@ -119,7 +148,7 @@ export default function DashboardPage() {
           </div>
           <div className="bg-gray-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6 transform hover:scale-105 transition-all">
             <p className="text-gray-400 text-sm">Queue</p>
-            <p className="text-4xl font-black text-cyan-400">{queue.filter(p => p.status === 'queued').length}</p>
+            <p className="text-4xl font-black text-cyan-400">{queue.filter((p) => p.status === 'queued').length}</p>
           </div>
           <div className="bg-gray-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6 transform hover:scale-105 transition-all">
             <p className="text-gray-400 text-sm">Platforms</p>
@@ -159,9 +188,15 @@ export default function DashboardPage() {
               <div key={post.id} className="bg-gray-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-4 flex justify-between items-center">
                 <div>
                   <p className="font-medium">{post.content}</p>
-                  <p className="text-sm text-gray-400">To: {post.platforms.join(', ')} | {post.status}</p>
+                  <p className="text-sm text-gray-400">
+                    To: {post.platforms.join(', ')} | {post.status}
+                  </p>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs ${post.status === 'posted' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs ${
+                    post.status === 'posted' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
+                  }`}
+                >
                   {post.status}
                 </span>
               </div>
@@ -194,12 +229,15 @@ export default function DashboardPage() {
               >
                 Authorize
               </button>
-              <button onClick={() => setShowOAuth(false)} className="w-full text-gray-400">Cancel</button>
+              <button onClick={() => setShowOAuth(false)} className="w-full text-gray-400">
+                Cancel
+              </button>
             </div>
           </div>
         )}
       </div>
 
+      {/* Blob animation keyframes */}
       <style jsx>{`
         @keyframes blob {
           0% { transform: translate(0px, 0px) scale(1); }
