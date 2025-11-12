@@ -53,7 +53,6 @@ export default function GeneratePage() {
 
   const aiBrain = (userInput: string): string => {
     const lower = userInput.toLowerCase().trim();
-    const words = lower.split(/\s+/);
 
     // 1. What is in vault X?
     const vaultMatch = lower.match(/vault\s*(\d+)/i);
@@ -70,9 +69,9 @@ export default function GeneratePage() {
     if (buildMatch) {
       const ids = buildMatch[1].split(/[\s\-\+]+/).map(Number).filter(n => n > 0 && n <= 30);
       const selected = vaults.filter(v => ids.includes(v.id));
-      if (selected.length === 0) return "No valid vaults found. Try: vault 5-10-25";
+      if (selected.length === 0) return 'No valid vaults found. Try: vault 5-10-25';
 
-      const stacked = selected.map(v => `--- ${v.name} ---\n${v.content}`).-join('\n\n');
+      const stacked = selected.map(v => `--- ${v.name} ---\n${v.content}`).join('\n\n');
       setPrompt(stacked);
       return `**STACKED ${selected.length} VAULT(S):**\n${selected.map(v => `• ${v.name}`).join('\n')}\n\n[PROMPT READY]`;
     }
@@ -80,10 +79,10 @@ export default function GeneratePage() {
     // 3. Use only X
     if (lower.includes('only') || lower.includes('just')) {
       const filter = lower.split(/only|just/i)[1]?.trim();
-      if (!filter || !prompt) return "Build a prompt first, then filter.";
+      if (!filter || !prompt) return 'Build a prompt first, then filter.';
       const filtered = prompt.split('\n').filter(line => line.toLowerCase().includes(filter)).join('\n');
       setPrompt(filtered || prompt);
-      return `Filtered for **"${filter}"** — Done.`;
+      return `Filtered for &quot;${filter}&quot; — Done.`;
     }
 
     // 4. Surprise me
@@ -111,7 +110,7 @@ export default function GeneratePage() {
     }
 
     // Default
-    return `I understand vault commands. Try:\n• "What is in vault 13?"\n• "Build me with vault 5-10-25"\n• "Use only bondage"\n• "Surprise me with 3 NSFW vaults"`;
+    return `I understand vault commands. Try:\n• &quot;What is in vault 13?&quot;\n• &quot;Build me with vault 5-10-25&quot;\n• &quot;Use only bondage&quot;\n• &quot;Surprise me with 3 NSFW vaults&quot;`;
   };
 
   const sendMessage = () => {
