@@ -51,43 +51,74 @@ export default function GeneratePage() {
     loadVaults();
   }, []);
 
-  const processCommand = (userInput: string) => {
+  const aiBrain = (userInput: string): string => {
     const lower = userInput.toLowerCase().trim();
+    const words = lower.split(/\s+/);
 
-    if (lower.includes('what vaults') || lower.includes('show vaults')) {
-      const list = vaults.map(v => `• ${v.name}`).join('\n');
-      return `Available Vaults:\n${list}`;
-    }
-
-    if (lower.includes('build me') || lower.includes('use vault')) {
-      const matches = lower.match(/vault\s*([\d\s\-+]+)\b/i);
-      if (matches) {
-        const ids = matches[1].split(/[\s\-+]+/).map(Number).filter(n => n > 0 && n <= 30);
-        const selected = vaults.filter(v => ids.includes(v.id));
-        if (selected.length === 0) return 'No valid vaults found. Try: vault 5-10-25';
-
-        const stacked = selected.map(v => `--- ${v.name} ---\n${v.content}`).join('\n\n');
-        setPrompt(stacked);
-        return `Stacking ${selected.length} vault(s):\n${selected.map(v => `• ${v.name}`).join('\n')}\n\n[PROMPT READY]`;
+    // 1. What is in vault X?
+    const vaultMatch = lower.match(/vault\s*(\d+)/i);
+    if (vaultMatch) {
+      const id = parseInt(vaultMatch[1]);
+      const vault = vaults.find(v => v.id === id);
+      if (vault) {
+        return `**VAULT ${id}: ${vault.name}**\n\n${vault.content}`;
       }
     }
 
-    if (lower.includes('only') || lower.includes('use only')) {
-      const filter = lower.split(/only\s+/i)[1];
-      if (!prompt) return 'Build a prompt first with vaults.';
-      const filtered = prompt.split('\n').filter(line => line.toLowerCase().includes(filter)).join('\n');
-      setPrompt(filtered || prompt);
-      return `Filtered for &quot;${filter}&quot; — Done.`;
+    // 2. Build with vault X-Y-Z
+    const buildMatch = lower.match(/build.*vault[s]*\s*([\d\s\-\+]+)/i) || lower.match(/use.*vault[s]*\s*([\d\s\-\+]+)/i);
+    if (buildMatch) {
+      const ids = buildMatch[1].split(/[\s\-\+]+/).map(Number).filter(n => n > 0 && n <= 30);
+      const selected = vaults.filter(v => ids.includes(v.id));
+      if (selected.length === 0) return "No valid vaults found. Try: vault 5-10-25";
+
+      const stacked = selected.map(v => `--- ${v.name} ---\n${v.content}`).-join('\n\n');
+      setPrompt(stacked);
+      return `**STACKED ${selected.length} VAULT(S):**\n${selected.map(v => `• ${v.name}`).join('\n')}\n\n[PROMPT READY]`;
     }
 
-    return 'Say: &quot;What vaults do you have?&quot; or &quot;Build me with vault 5-10-25&quot;';
+    // 3. Use only X
+    if (lower.includes('only') || lower.includes('just')) {
+      const filter = lower.split(/only|just/i)[1]?.trim();
+      if (!filter || !prompt) return "Build a prompt first, then filter.";
+      const filtered = prompt.split('\n').filter(line => line.toLowerCase().includes(filter)).join('\n');
+      setPrompt(filtered || prompt);
+      return `Filtered for **"${filter}"** — Done.`;
+    }
+
+    // 4. Surprise me
+    if (lower.includes('surprise') && lower.includes('vault')) {
+      const count = parseInt(lower.match(/(\d+)/)?.[1] || '3');
+      const shuffled = [...vaults].sort(() => Math.random() - 0.5).slice(0, count);
+      const stacked = shuffled.map(v => `--- ${v.name} ---\n${v.content}`).join('\n\n');
+      setPrompt(stacked);
+      return `**SURPRISE!** Stacked ${count} random vault(s):\n${shuffled.map(v => `• ${v.name}`).join('\n')}`;
+    }
+
+    // 5. Mix with DNA
+    if (lower.includes('dna') || lower.includes('sarita')) {
+      const dnaVault = vaults.find(v => v.name.includes('DNA'));
+      if (dnaVault && prompt) {
+        const mixed = `${prompt}\n\n--- CHARACTER DNA: SARITA ---\n${dnaVault.content}`;
+        setPrompt(mixed);
+        return `**DNA INJECTED:** Sarita's traits added to prompt.`;
+      }
+    }
+
+    // 6. What vaults do you have?
+    if (lower.includes('what vaults') || lower.includes('list vaults')) {
+      return `**AVAILABLE VAULTS:**\n${vaults.map(v => `• **${v.name}**`).join('\n')}`;
+    }
+
+    // Default
+    return `I understand vault commands. Try:\n• "What is in vault 13?"\n• "Build me with vault 5-10-25"\n• "Use only bondage"\n• "Surprise me with 3 NSFW vaults"`;
   };
 
   const sendMessage = () => {
     if (!input.trim()) return;
     const userMsg = { role: 'user' as const, text: input };
     setChat(prev => [...prev, userMsg]);
-    const botReply = processCommand(input);
+    const botReply = aiBrain(input);
     setChat(prev => [...prev, { role: 'bot' as const, text: botReply }]);
     setInput('');
   };
@@ -133,12 +164,12 @@ export default function GeneratePage() {
           ))}
         </div>
 
-        {/* CHAT UI */}
+        {/* AI CHAT */}
         <div className="mt-16 bg-gray-900 p-6 rounded-3xl border border-purple-500/30">
           <div className="h-96 overflow-y-auto mb-4 space-y-3">
             {chat.length === 0 && (
               <p className="text-gray-500 text-center">
-                Ask: &quot;What vaults do you have?&quot; or &quot;Build me with vault 5-10-25&quot;
+                Ask me anything: &quot;What is in vault 13?&quot; or &quot;Build me with vault 5-10-25&quot;
               </p>
             )}
             {chat.map((msg, i) => (
@@ -156,7 +187,7 @@ export default function GeneratePage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-              placeholder="Talk to your Siren Forge..."
+              placeholder="Ask your AI Siren Forge..."
               className="flex-1 bg-black border border-cyan-500/50 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400"
             />
             <button
@@ -181,10 +212,10 @@ export default function GeneratePage() {
           </div>
         )}
 
-        {/* PROMPT PREVIEW + GENERATE */}
+        {/* PROMPT + GENERATE */}
         {prompt && (
           <div className="mt-8 bg-gray-900 p-6 rounded-3xl border border-cyan-500/30">
-            <h3 className="text-lg font-bold text-cyan-400 mb-2">PROMPT PREVIEW</h3>
+            <h3 className="text-lg font-bold text-cyan-400 mb-2">PROMPT READY</h3>
             <pre className="text-xs text-gray-300 max-h-48 overflow-y-auto whitespace-pre-wrap">{prompt}</pre>
             <button
               onClick={generate}
