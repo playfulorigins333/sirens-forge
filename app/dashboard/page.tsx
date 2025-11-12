@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-export const dynamic = 'force-dynamic'; // ONLY THIS LINE
+export const dynamic = 'force-dynamic';
 
 interface Muse {
   id: string;
@@ -94,13 +94,40 @@ export default function DashboardPage() {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-black to-pink-900">
-        <button
-          onClick={signIn}
-          className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-bold text-xl transform hover:scale-105 transition-all"
-        >
-          Sign In to Automate
-        </button>
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-pink-900 text-white p-6 relative overflow-hidden">
+        {/* Blobs */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute top-40 right-10 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-yellow-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center mt-32">
+          <h1 className="text-7xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-6 animate-pulse">
+            SIRENS FORGE
+          </h1>
+          <h2 className="text-4xl font-bold text-white mb-4">AI INFLUENCER EMPIRE</h2>
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            Build AI sirens. Auto-post to Fanvue, X, Instagram, TikTok.  
+            Earn 80%. We take 20%. Zero touch.
+          </p>
+          <button
+            onClick={signIn}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-12 py-5 rounded-full font-bold text-2xl transform hover:scale-110 transition-all shadow-2xl hover:shadow-purple-500/50"
+          >
+            SIGN IN TO AUTOMATE
+          </button>
+          <p className="text-sm text-gray-400 mt-8">
+            No credit card. No setup. Just empire.
+          </p>
+        </div>
+
+        <style jsx>{`
+          @keyframes blob { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-50px) scale(1.1); } 66% { transform: translate(-20px,20px) scale(0.9); } }
+          .animate-blob { animation: blob 7s infinite; }
+          .animation-delay-2000 { animation-delay: 2s; }
+          .animation-delay-4000 { animation-delay: 4s; }
+        `}</style>
       </div>
     );
   }
