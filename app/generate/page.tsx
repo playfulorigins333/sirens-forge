@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 interface Vault {
   id: number;
@@ -63,7 +64,7 @@ export default function GeneratePage() {
       if (matches) {
         const ids = matches[1].split(/[\s\-+]+/).map(Number).filter(n => n > 0 && n <= 30);
         const selected = vaults.filter(v => ids.includes(v.id));
-        if (selected.length === 0) return "No valid vaults found. Try: vault 5-10-25";
+        if (selected.length === 0) return 'No valid vaults found. Try: vault 5-10-25';
 
         const stacked = selected.map(v => `--- ${v.name} ---\n${v.content}`).join('\n\n');
         setPrompt(stacked);
@@ -73,13 +74,13 @@ export default function GeneratePage() {
 
     if (lower.includes('only') || lower.includes('use only')) {
       const filter = lower.split(/only\s+/i)[1];
-      if (!prompt) return "Build a prompt first with vaults.";
+      if (!prompt) return 'Build a prompt first with vaults.';
       const filtered = prompt.split('\n').filter(line => line.toLowerCase().includes(filter)).join('\n');
       setPrompt(filtered || prompt);
-      return `Filtered for "${filter}" — Done.`;
+      return `Filtered for &quot;${filter}&quot; — Done.`;
     }
 
-    return "Say: 'What vaults do you have?' or 'Build me with vault 5-10-25'";
+    return 'Say: &quot;What vaults do you have?&quot; or &quot;Build me with vault 5-10-25&quot;';
   };
 
   const sendMessage = () => {
@@ -136,7 +137,9 @@ export default function GeneratePage() {
         <div className="mt-16 bg-gray-900 p-6 rounded-3xl border border-purple-500/30">
           <div className="h-96 overflow-y-auto mb-4 space-y-3">
             {chat.length === 0 && (
-              <p className="text-gray-500 text-center">Ask: "What vaults do you have?" or "Build me with vault 5-10-25"</p>
+              <p className="text-gray-500 text-center">
+                Ask: &quot;What vaults do you have?&quot; or &quot;Build me with vault 5-10-25&quot;
+              </p>
             )}
             {chat.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -197,7 +200,14 @@ export default function GeneratePage() {
         {result && (
           <div className="mt-16 text-center">
             <h2 className="text-4xl font-bold text-cyan-400">SIREN FORGED</h2>
-            <img src={result} className="mt-8 max-w-3xl mx-auto rounded-2xl shadow-2xl" />
+            <div className="mt-8 relative w-full max-w-3xl mx-auto h-96">
+              <Image
+                src={result}
+                alt="Generated Siren"
+                fill
+                className="rounded-2xl shadow-2xl object-contain"
+              />
+            </div>
             <a href={result} download className="mt-6 inline-block bg-gradient-to-r from-cyan-400 to-purple-600 text-black font-bold py-4 px-16 rounded-full">
               DOWNLOAD (R2)
             </a>
