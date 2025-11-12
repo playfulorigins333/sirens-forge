@@ -46,12 +46,13 @@ export default function GeneratePage() {
       });
       const data = await res.json();
 
-      // CLEAN ANY LEFTOVER HTML
+      // FORCE CLEAN TEXT — NO HTML ENTITIES
       const cleanReply = data.reply
         .replace(/&quot;/g, '"')
         .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>');
+        .replace(/&gt;/g, '>')
+        .replace(/&#39;/g, "'");
 
       setMessages(prev => [...prev, {
         role: 'assistant',
@@ -82,7 +83,7 @@ export default function GeneratePage() {
 
         {/* Floating Hint */}
         <div className="fixed top-8 right-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-          what is in vault 13
+          what is in your vaults
         </div>
 
         {/* Chat */}
@@ -97,7 +98,10 @@ export default function GeneratePage() {
                     : 'bg-gray-800 text-cyan-100 border border-cyan-500/30'
                   }
                 `}>
-                  <pre className="whitespace-pre-wrap break-words">{m.content}</pre>
+                  {/* FIXED: whitespace-pre-wrap (not warp) */}
+                  <pre className="whitespace-pre-wrap break-words text-xs">
+                    {m.content}
+                  </pre>
                   {m.ready && (
                     <Badge className="mt-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-black font-bold text-xs">
                       READY TO GENERATE

@@ -1,73 +1,102 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getVault, getVaultName } from '@/lib/vaults';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
 
-const ULTRA_TAGS: Record<number, string[]> = {
-  25: ["tail plug wagging", "leash tug", "kennel training", "good pet praise"],
-  13: ["beads yanked", "cum leaking", "marked owned", "tail twitching"],
-  7: ["suspension", "breath play", "wax on ropes", "shibari knots"],
+const VAULTS_DIR = path.join(process.cwd(), 'public/vaults');
+
+interface VaultData {
+  id: number;
+  name: string;
+  ultra: string[];
+}
+
+const loadVaults = (): VaultData[] => {
+  const files = fs.readdirSync(VAULTS_DIR).filter(f => f.includes('combined_Vault'));
+  const vaults: VaultData[] = [];
+
+  files.forEach(file => {
+    const content = fs.readFileSync(path.join(VAULTS_DIR, file), 'utf8');
+    const { data } = matter(content);
+    const match = file.match(/combined_Vault[_\s]?#?(\d+)-(\d+)/i);
+    if (match) {
+      const start = parseInt(match[1]);
+      const end = parseInt(match[2]);
+      for (let i = start; i <= end; i++) {
+        const vaultKey = `vault_${i.toString().padStart(2, '0')}`;
+        const name = data[vaultKey] || `Vault ${i}`;
+        const ultra = extractUltraTags(content, i);
+        vaults.push({ id: i, name, ultra });
+      }
+    }
+  });
+
+  return vaults;
 };
+
+const extractUltraTags = (content: string, vaultId: number): string[] => {
+  const lines = content.split('\n');
+  const tags: string[] = [];
+  let inUltra = false;
+
+  for (const line of lines) {
+    if (line.includes(`Vault ${vaultId}`) && line.includes('Ultra')) {
+      inUltra = true;
+      continue;
+    }
+    if (inUltra && line.startsWith('- ')) {
+      tags.push(line.slice(2).trim());
+    }
+    if (inUltra && line.startsWith('##')) {
+      break;
+    }
+  }
+
+  return tags.slice(0, 6);
+};
+
+let CACHED_VAULTS: VaultData[] | null = null;
 
 export async function POST(req: NextRequest) {
   try {
+    if (!CACHED_VAULTS) CACHED_VAULTS = loadVaults();
+    const vaults = CACHED_VAULTS;
+
     const { message } = await req.json();
     const input = message.toLowerCase().trim();
 
     let reply = '';
     let ready = false;
-    let stack: number[] = [];
     let prompt = '';
 
     if (input.includes('vault') && input.match(/\d+/)) {
       const id = parseInt(input.match(/\d+/)![0]);
-      const name = getVaultName(id);
-      const tags = ULTRA_TAGS[id] || ["intense", "wet", "bound", "exposed"];
-
-      reply = `VAULT ${id} — ${name.toUpperCase()}
+      const vault = vaults.find(v => v.id === id);
+      if (vault) {
+        reply = `VAULT ${id} — ${vault.name.toUpperCase()}
 Ultra Mode
 
 TAGS
-${tags.map(t => `• ${t}`).join('\n')}
+${vault.ultra.map(t => `• ${t}`).join('\n') || '• intense • wet • bound'}
 
 SCENE PREVIEW
-She kneels in the steel crate, tail plug twitching with every breath...
+She stands in ritual light, eyes daring, body marked...
 
 READY TO GENERATE`;
-
-      ready = true;
-      prompt = `${name} — ultra detail, 4K, cinematic, wet, bound`;
-    }
-
-    else if (input.includes('+') || input.includes('stack') || input.includes('build me')) {
-      const ids = (input.match(/\d+/g) || []).map(Number);
-      stack = ids;
-      const names = ids.map(getVaultName);
-
-      reply = `STACK: ${names.map(n => n.toUpperCase()).join(' + ')}
-Ultra Fusion
-
-COMBINED TAGS
-${ids.flatMap(id => ULTRA_TAGS[id] || []).slice(0, 6).map(t => `• ${t}`).join('\n')}
-
-SCENE PREVIEW
-Bound in shibari, tail plug pulsing, fluids drip as the crowd watches...
-
-READY TO GENERATE`;
-
-      ready = true;
-      prompt = `${names.join(', ')} — ultra fusion, 4K, wet, cinematic`;
-    }
-
-    else {
+        ready = true;
+        prompt = `${vault.name} — ultra, 4K, cinematic, wet`;
+      }
+    } else {
       reply = `SIREN MUSE ORACLE
 Try:
-• Show me vault 25
+• What is in vault 13?
 • Build me with vault 7-25
-• Use only bondage
 • Surprise me with 3 NSFW vaults`;
     }
 
-    return NextResponse.json({ reply, ready, stack, prompt });
-  } catch {
+    return NextResponse.json({ reply, ready, prompt });
+  } catch (err) {
+    console.error(err);
     return NextResponse.json({ error: 'Oracle error' }, { status: 500 });
   }
 }
