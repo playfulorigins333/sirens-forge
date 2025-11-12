@@ -1,0 +1,84 @@
+{
+  "vault_index": {
+    "vault_01": "Composition & Framing",
+    "vault_02": "Lighting & Environment",
+    "vault_03": "Pose, Action & Motion",
+    "vault_04": "Clothing & Fabric",
+    "vault_05": "Expression & Emotion",
+    "vault_06": "Body Focus – Breasts, Hips, Belly",
+    "vault_07": "Position, Restraint & Bondage",
+    "vault_08": "-Object Insertion & Toys",
+    "vault_09": "Oral – Giving & Receiving",
+    "vault_10": "Cum, Fluids & Wetness",
+    "vault_11": "Public Risk & Exhibition",
+    "vault_12": "Breathplay, Choking & Control",
+    "vault_13": "Anal, Ass & Tail",
+    "vault_14": "Feet, Soles & Heels",
+    "vault_15": "Voice, Dialogue & Sound",
+    "vault_16": "Hair, Scalp & Pulling",
+    "vault_17": "Sensory Play & Pain",
+    "vault_18": "Sadism, Degradation & Cruelty",
+    "vault_19": "Transformation, Fantasy, Surreal",
+    "vault_20": "Hands, Fingers & Nails",
+    "vault_21": "Sizeplay, Macro, Inflation",
+    "vault_22": "Gore, Blood & Knifeplay",
+    "vault_23": "Watersports, Enemas, Deprivation",
+    "vault_24": "Creature, Alien, Tentacle",
+    "vault_25": "Petplay, Kennels & Discipline",
+    "vault_26": "Age Regression, DDLG, Bratplay",
+    "vault_27": "Roleplay, Fantasy & Costume",
+    "vault_28": "Smell, Sweat & Pheromones",
+    "vault_29": "Gender, Identity & Sissification",
+    "vault_30": "Multi-Partner, Orgy & Cuckoldry"
+  },
+  "query_templates": [
+    {
+      "type": "vault_lookup",
+      "example_user": "Show me what's in Vault 13 Ultra",
+      "response_format": "Lists or sample tags from vault_13_ultra, formatted for UI or prompt injection"
+    },
+    {
+      "type": "vault_stack",
+      "example_user": "Stack Vault 7 + Vault 25 Ultra",
+      "response_format": "Combined prompt using tags from both vaults, optionally formatted as code block"
+    },
+    {
+      "type": "vault_explain",
+      "example_user": "What’s the difference between Vault 10 and Vault 20?",
+      "response_format": "Plain-language comparison of vault themes with tag flavor and usage context"
+    },
+    {
+      "type": "vault_themes",
+      "example_user": "Which vaults are good for group sex or public scenes?",
+      "response_format": "List of vaults matching the theme, optionally filtered by mode"
+    },
+    {
+      "type": "vault_dna_integration",
+      "example_user": "Mix Sarita DNA with Vault 18",
+      "response_format": "DNA-stabilized prompt sample using Vault 18 tags with Sarita's character traits"
+    },
+    {
+      "type": "batch_or_story",
+      "example_user": "Give me a story using Vault 30 Ultra",
+      "response_format": "Story intro or outline using Vault 30 Ultra tags, formatted for narrative or export"
+    }
+  ],
+  "ui_ux": {
+    "default_modes": ["SFW", "NSFW", "Ultra"],
+    "response_display": "Markdown or prompt block formatting for clarity",
+    "support_features": [
+      "DNA recall and preview",
+      "Vault stack randomizer",
+      "Tag search by theme",
+      "Macro import/export",
+      "Mode filter toggle"
+vault_08
+    ]
+  },
+  "dev_notes": {
+    "tag_handling": "Vault tags should be preloaded and referenced via JSON object or embedded markdown",
+    "dna_merge": "Use token injection to keep character DNA consistent across batches",
+    "scene_builder": "Allow stacking of vaults by ID or name to dynamically generate full scenes",
+    "batch_support": "Enable user to request X number of prompt outputs using selected vaults + DNA"
+  }
+}
