@@ -1,11 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession, signIn } from 'next-auth/react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import axios from 'axios';
 
-// Force dynamic — NO PRERENDER
 export const dynamic = 'force-dynamic';
 
 interface Muse {
@@ -13,90 +11,56 @@ interface Muse {
   name: string;
   avatar: string;
   bio: string;
-  lora: string;
   platforms: ('fanvue' | 'x' | 'instagram' | 'tiktok')[];
   connected: boolean;
 }
 
 interface PostQueue {
   id: string;
-  museId: string;
   content: string;
   media: string[];
-  platforms: ('fanvue' | 'x' | 'instagram' | 'tiktok')[];
-  scheduled: string;
+  platforms: string[];
   status: 'queued' | 'posted' | 'failed';
-  earnings?: number;
 }
 
 export default function DashboardPage() {
-  const [session, setSession] = useState<any>(null);
-  const [status, setStatus] = useState<'loading' | 'authenticated' | 'unauthenticated'>('loading');
+  const [user, setUser] = useState<any>(null);
   const [muses, setMuses] = useState<Muse[]>([]);
   const [queue, setQueue] = useState<PostQueue[]>([]);
   const [analytics, setAnalytics] = useState<any[]>([]);
-  const [building, setBuilding] = useState(false);
-  const [refImages, setRefImages] = useState<File[]>([]);
-  const [museName, setMuseName] = useState('');
-  const [museBio, setMuseBio] = useState('');
   const [showOAuth, setShowOAuth] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<'fanvue' | 'x' | 'instagram' | 'tiktok'>('fanvue');
 
-  // Client-only auth check
+  // Client-only auth + data load
   useEffect(() => {
     const checkAuth = async () => {
-      const res = await fetch('/api/auth/session');
-      const data = await res.json();
-      if (data.user) {
-        setSession(data);
-        setStatus('authenticated');
-        fetchDashboard();
-      } else {
-        setStatus('unauthenticated');
+      try {
+        const res = await fetch('/api/auth/session');
+        const data = await res.json();
+        if (data.user) {
+          setUser(data.user);
+          loadData();
+        }
+      } catch (err) {
+        console.error('Auth check failed');
       }
     };
     checkAuth();
   }, []);
 
-  const fetchDashboard = async () => {
-    setMuses([
-      { id: '1', name: 'Luna Siren', avatar: '/vaults/luna.jpg', bio: 'Eternal siren of the deep', lora: 'luna-lora.safetensors', platforms: ['fanvue', 'x'], connected: true }
-    ]);
-    setQueue([
-      { id: '1', museId: '1', content: 'New drop from Luna', media: ['/gen/luna1.jpg'], platforms: ['fanvue', 'x'], scheduled: 'Now', status: 'queued' }
-    ]);
-    setAnalytics([
-      { day: 'Mon', earnings: 100 },
-      { day: 'Tue', earnings: 150 },
-      { day: 'Wed', earnings: 120 },
-      { day: 'Thu', earnings: 200 },
-      { day: 'Fri', earnings: 180 },
-      { day: 'Sat', earnings: 220 },
-      { day: 'Sun', earnings: 140 },
-    ]);
+  const loadData = async () => {
+    try {
+      const res = await axios.get('/api/dashboard');
+      setMuses(res.data.muses || []);
+      setQueue(res.data.queue || []);
+      setAnalytics(res.data.analytics || []);
+    } catch (err) {
+      console.error('Failed to load dashboard');
+    }
   };
 
-  const buildMuse = async () => {
-    if (!museName || refImages.length < 3) return alert('Need name + 3+ refs');
-    setBuilding(true);
-
-    const formData = new FormData();
-    formData.append('name', museName);
-    formData.append('bio', museBio);
-    refImages.forEach((file, i) => formData.append(`ref${i}`, file));
-
-    try {
-      const res = await axios.post('/api/build-muse', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      const newMuse = res.data.muse;
-      setMuses(prev => [...prev, newMuse]);
-      alert(`Muse "${newMuse.name}" built! Queued first post.`);
-      setMuseName(''); setMuseBio(''); setRefImages([]);
-    } catch (err) {
-      alert('Build failed — try again.');
-    }
-    setBuilding(false);
+  const signIn = (platform: string) => {
+    window.location.href = `/api/auth/signin/${platform}`;
   };
 
   const connectPlatform = (platform: typeof selectedPlatform) => {
@@ -105,126 +69,128 @@ export default function DashboardPage() {
     signIn(platform);
   };
 
-  const queuePost = async (museId: string) => {
-    const muse = muses.find(m => m.id === museId);
-    if (!muse) return;
-
-    const post: PostQueue = {
-      id: Date.now().toString(),
-      museId,
-      content: `${muse.name} drops new siren. Link in bio. #SirensForge`,
+  const queuePost = async (muse: Muse) => {
+    const post = {
+      content: `${muse.name} just dropped. Link in bio. #SirensForge`,
       media: [muse.avatar],
       platforms: muse.platforms,
-      scheduled: new Date(Date.now() + 3600000).toISOString(),
-      status: 'queued',
     };
-
     await axios.post('/api/queue-post', post);
-    setQueue(prev => [post, ...prev]);
+    setQueue(prev => [{ ...post, id: Date.now().toString(), status: 'queued' }, ...prev]);
   };
 
-  if (status === 'loading') return <div className="min-h-screen flex items-center justify-center text-white">Loading empire...</div>;
-  if (status === 'unauthenticated') return <div className="min-h-screen flex items-center justify-center"><button onClick={() => signIn()} className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl">Sign In to Automate</button></div>;
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-black to-pink-900">
+        <button
+          onClick={() => signIn('google')} // or your provider
+          className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-bold text-xl transform hover:scale-105 transition-all"
+        >
+          Sign In to Automate
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-pink-900 text-white p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
-          AI INFLUENCER EMPIRE
-        </h1>
-        <p className="text-gray-300 mb-8">Build muses. Auto-post forever. Collect 20%.</p>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-pink-900 text-white p-6 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+        <div className="absolute top-40 right-10 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-yellow-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+      </div>
 
-        {/* AI BUILDER */}
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-8 mb-8">
-          <h2 className="text-3xl font-bold text-white mb-6">Build AI Influencer</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <input
-              type="text"
-              placeholder="Muse Name"
-              value={museName}
-              onChange={(e) => setMuseName(e.target.value)}
-              className="bg-transparent border border-purple-500/50 rounded-xl p-3"
-            />
-            <input
-              type="text"
-              placeholder="Bio"
-              value={museBio}
-              onChange={(e) => setMuseBio(e.target.value)}
-              className="bg-transparent border border-purple-500/50 rounded-xl p-3"
-            />
+      <div className="relative z-10 max-w-7xl mx-auto">
+        <h1 className="text-6xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2 animate-pulse">
+          EMPIRE CONTROL
+        </h1>
+        <p className="text-xl text-gray-300 mb-12">Auto-post. Earn. Scale. Zero touch.</p>
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+          <div className="bg-gray-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6 transform hover:scale-105 transition-all">
+            <p className="text-gray-400 text-sm">Your Cut (20%)</p>
+            <p className="text-4xl font-black text-green-400">$2.4K</p>
           </div>
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={(e) => setRefImages(Array.from(e.target.files || []))}
-            className="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700 mb-4"
-          />
-          <button
-            onClick={buildMuse}
-            disabled={building || !museName || refImages.length < 3}
-            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-4 rounded-xl disabled:opacity-50"
-          >
-            {building ? 'Forging...' : `Build Muse (${refImages.length}/10)`}
-          </button>
+          <div className="bg-gray-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6 transform hover:scale-105 transition-all">
+            <p className="text-gray-400 text-sm">Muses</p>
+            <p className="text-4xl font-black text-purple-300">{muses.length}</p>
+          </div>
+          <div className="bg-gray-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6 transform hover:scale-105 transition-all">
+            <p className="text-gray-400 text-sm">Queue</p>
+            <p className="text-4xl font-black text-cyan-400">{queue.filter(p => p.status === 'queued').length}</p>
+          </div>
+          <div className="bg-gray-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6 transform hover:scale-105 transition-all">
+            <p className="text-gray-400 text-sm">Platforms</p>
+            <p className="text-4xl font-black text-yellow-400">4</p>
+          </div>
         </div>
 
-        {/* MUSES & QUEUE */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6">
-            <h2 className="text-2xl font-bold mb-4">Your Muses</h2>
+        {/* Muses */}
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold mb-6">Your Muses</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {muses.map((muse) => (
-              <div key={muse.id} className="flex items-center justify-between mb-4 p-4 bg-gray-800 rounded-xl">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gray-700 rounded-full mr-3" />
+              <div key={muse.id} className="bg-gray-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6 hover:shadow-purple-500/25 transition-all">
+                <div className="flex items-center mb-4">
+                  <div className="w-16 h-16 bg-gray-700 rounded-full mr-4" />
                   <div>
-                    <p className="font-bold">{muse.name}</p>
-                    <p className="text-sm text-gray-400">{muse.platforms.join(', ')}</p>
+                    <h3 className="font-bold text-xl">{muse.name}</h3>
+                    <p className="text-sm text-gray-400">{muse.platforms.join(' · ')}</p>
                   </div>
                 </div>
                 <button
-                  onClick={() => queuePost(muse.id)}
-                  className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded"
+                  onClick={() => queuePost(muse)}
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 rounded-xl transform hover:scale-105 transition-all"
                 >
                   Queue Post
                 </button>
               </div>
             ))}
           </div>
+        </div>
 
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-6">
-            <h2 className="text-2xl font-bold mb-4">Auto-Post Queue</h2>
+        {/* Queue */}
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold mb-6">Auto-Post Queue</h2>
+          <div className="space-y-4">
             {queue.map((post) => (
-              <div key={post.id} className="mb-3 p-3 bg-gray-800 rounded">
-                <p className="text-sm">{post.content}</p>
-                <p className="text-xs text-gray-400">To: {post.platforms.join(', ')} | {post.status}</p>
+              <div key={post.id} className="bg-gray-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-4 flex justify-between items-center">
+                <div>
+                  <p className="font-medium">{post.content}</p>
+                  <p className="text-sm text-gray-400">To: {post.platforms.join(', ')} | {post.status}</p>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-xs ${post.status === 'posted' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                  {post.status}
+                </span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* CONNECT PLATFORMS */}
+        {/* Connect Platforms */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {['fanvue', 'x', 'instagram', 'tiktok'].map((platform) => (
             <button
               key={platform}
               onClick={() => connectPlatform(platform as any)}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-3 rounded-xl font-bold"
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-4 rounded-xl font-bold text-lg transform hover:scale-105 transition-all"
             >
               Connect {platform.toUpperCase()}
             </button>
           ))}
         </div>
 
-        {/* OAUTH MODAL */}
+        {/* OAuth Modal */}
         {showOAuth && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-            <div className="bg-gray-900 p-8 rounded-xl max-w-md">
-              <h3 className="text-xl mb-4">Connect {selectedPlatform.toUpperCase()}</h3>
+            <div className="bg-gray-900 p-8 rounded-2xl max-w-md w-full">
+              <h3 className="text-2xl font-bold mb-4">Connect {selectedPlatform.toUpperCase()}</h3>
               <p className="text-gray-400 mb-6">One-time consent. Auto-posts forever.</p>
               <button
                 onClick={() => connectPlatform(selectedPlatform)}
-                className="w-full bg-green-600 text-white py-3 rounded mb-2"
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-xl font-bold mb-2"
               >
                 Authorize
               </button>
@@ -233,6 +199,18 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      <style jsx>{`
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob { animation: blob 7s infinite; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+      `}</style>
     </div>
   );
 }
