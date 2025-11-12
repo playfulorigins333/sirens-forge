@@ -23,7 +23,7 @@ export default function MusesPage() {
       alert(`Checkout failed for ${name}: ${error.message}`);
       setLoading(null);
     }
-  };
+  }; // ← THIS WAS MISSING
 
   return (
     <div className="min-h-screen bg-black text-white py-20 px-6">
@@ -60,4 +60,55 @@ export default function MusesPage() {
 
         {/* VAULT PRO — $599.99 */}
         <div className="group relative">
-          <div className="absolute -inset-2 bg-gradient
+          <div className="absolute -inset-2 bg-gradient-to-r from-purple-500 to-pink-600 rounded-3xl blur-xl opacity-70 group-hover:opacity-100 transition"></div>
+          <div className="relative bg-black border border-purple-500/50 p-10 rounded-3xl text-center">
+            <h3 className="text-3xl font-bold text-purple-400">Vault Pro</h3>
+            <p className="text-5xl font-black mt-4">$599.99</p>
+            <ul className="mt-6 text-left text-gray-300 space-y-2 text-sm">
+              <li>1 Pre-Built Vault Muse</li>
+              <li>42×4K Images</li>
+              <li>12 Teasers</li>
+              <li>10 Videos + Voice Pack</li>
+              <li>Auto-Post to Fanvue</li>
+              <li>Weekly AI Updates</li>
+            </ul>
+            <button
+              onClick={() => checkout('price_1SSHrwFjcWRhhOnzJWKmeLpz', 'Vault Pro')}
+              disabled={loading === 'price_1SSHrwFjcWRhhOnzJWKmeLpz'}
+              className="mt-8 w-full bg-gradient-to-r from-purple-400 to-pink-500 text-black font-bold py-4 rounded-full disabled:opacity-50"
+            >
+              {loading === 'price_1SSHrwFjcWRhhOnzJWKmeLpz' ? 'Loading...' : 'Buy Pro'}
+            </button>
+          </div>
+        </div>
+
+        {/* VAULT ELITE — $999.99 */}
+        <div className="group relative">
+          <div className="absolute -inset-3 bg-gradient-to-r from-yellow-600 to-amber-700 rounded-3xl blur-2xl opacity-90 group-hover:opacity-100 transition animate-pulse"></div>
+          <div className="relative bg-gradient-to-br from-amber-900/90 to-black p-10 rounded-3xl text-center ring-4 ring-yellow-500/50">
+            <h3 className="text-3xl font-bold text-yellow-400">Vault Elite</h3>
+            <p className="text-5xl font-black mt-4">$999.99</p>
+            <ul className="mt-6 text-left text-gray-200 space-y-2 text-sm">
+              <li>1 Pre-Built Vault Muse</li>
+              <li>100×4K Images</li>
+              <li>20 Teasers</li>
+              <li>20 Videos + Voice Pack</li>
+              <li>Full Muse Agency (4x/mo)</li>
+            </ul>
+            <button
+              onClick={() => checkout('price_1SSHtNFjcWRhhOnzoGLxbUDv', 'Vault Elite')}
+              disabled={loading === 'price_1SSHtNFjcWRhhOnzoGLxbUDv'}
+              className="mt-8 w-full bg-gradient-to-r from-yellow-400 to-amber-600 text-black font-bold py-5 rounded-full disabled:opacity-50"
+            >
+              {loading === 'price_1SSHtNFjcWRhhOnzoGLxbUDv' ? 'Loading...' : 'Buy Elite'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <p className="text-center mt-16 text-sm text-gray-500">
+        All muses are pre-built from the Sirens Forge Vault. Difference = content volume and management.
+      </p>
+    </div>
+  );
+}
