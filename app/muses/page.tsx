@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 
+// FORCE REBUILD — DELETE THIS LINE AFTER DEPLOY
+// (This makes Vercel rebuild fresh)
+
 export default function MusesPage() {
   const [loading, setLoading] = useState<string | null>(null);
 
