@@ -3,9 +3,7 @@
 import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-// Prevent static prerendering
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const dynamic = 'force-dynamic'; // ONLY THIS LINE
 
 interface Muse {
   id: string;
@@ -33,7 +31,6 @@ export default function DashboardPage() {
   const [showOAuth, setShowOAuth] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<'fanvue' | 'x' | 'instagram' | 'tiktok'>('fanvue');
 
-  // Client-only auth check
   useEffect(() => {
     const check = async () => {
       try {
