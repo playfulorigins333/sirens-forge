@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ interface Message {
   role: 'user' | 'assistant';
   content: string;
   ready?: boolean;
+  prompt?: string;
 }
 
 export default function GeneratePage() {
@@ -18,11 +19,11 @@ export default function GeneratePage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: `I understand vault commands. Try:
+      content: I understand vault commands. Try:
 • What is in vault 13?
 • Build me with vault 5-10-25
 • Use only bondage
-• Surprise me with 3 NSFW vaults`,
+• Surprise me with 3 NSFW vaults,
       ready: false
     }
   ]);
@@ -113,14 +114,11 @@ export default function GeneratePage() {
         <div className="bg-gradient-to-b from-gray-900/80 to-black/80 backdrop-blur-2xl rounded-3xl p-8 border border-gradient-to-r from-cyan-500/30 to-pink-500/30 shadow-2xl shadow-purple-600/50">
           <ScrollArea className="h-96 pr-4 mb-8">
             {messages.map((m, i) => (
-              <div key={i} className={`mb-6 flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`
+              <div key={i} className={mb-6 flex }>
+                <div className={
                   max-w-3xl p-6 rounded-3xl shadow-xl font-mono text-sm leading-relaxed
-                  ${m.role === 'user'
-                    ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white'
-                    : 'bg-gradient-to-r from-gray-800 to-gray-900 text-cyan-100 border border-cyan-500/30'
-                  }
-                `}>
+                  
+                }>
                   <pre className="whitespace-pre-wrap break-words text-sm">
                     {m.content}
                   </pre>
