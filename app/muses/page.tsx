@@ -1,138 +1,104 @@
 'use client';
 
 import { useState } from 'react';
-
-// FORCE REBUILD — DELETE THIS LINE AFTER DEPLOY
-// (This makes Vercel rebuild fresh)
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 export default function MusesPage() {
-  const [loading, setLoading] = useState<string | null>(null);
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [files, setFiles] = useState<File[]>([]);
+  const [name, setName] = useState('');
+  const [bio, setBio] = useState('');
+  const [building, setBuilding] = useState(false);
 
-  const tiers = [
-    {
-      name: 'Vault Starter',
-      price: '$299.99',
-      priceId: 'price_1SSHrTFjcWRhhOnzO4GoeACt',
-      button: 'BUY STARTER',
-      perks: [
-        '1 Pre-built Vault Muse',
-        '20×4K Images',
-        '3 Videos + Voice Pack',
-        'R2 Instant Delivery'
-      ],
-      color: 'from-cyan-400 to-blue-600',
-      glow: 'shadow-cyan-500/50'
-    },
-    {
-      name: 'Vault Pro',
-      price: '$599.99',
-      priceId: 'price_1SSHrwFjcWRhhOnzJWKmeLpz',
-      button: 'BUY PRO',
-      perks: [
-        '1 Pre-built Vault Muse',
-        '42×4K Images',
-        '10 Videos + Voice Pack',
-        'Auto-Post to Fansvue',
-        'Weekly AI Updates'
-      ],
-      color: 'from-purple-400 to-pink-600',
-      glow: 'shadow-purple-500/50'
-    },
-    {
-      name: 'Vault Elite',
-      price: '$999.99',
-      priceId: 'price_1SSHtNFjcWRhhOnzoGLxbUDv',
-      button: 'BUY ELITE',
-      perks: [
-        '1 Pre-built Vault Muse',
-        '100×4K Images',
-        '20 Videos + Voice Pack',
-        'Full Muse Agency (4x/mo)',
-        'No Royalties (OG only)'
-      ],
-      color: 'from-orange-400 to-yellow-600',
-      glow: 'shadow-yellow-500/50'
-    }
-  ];
+  if (status === 'loading') return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>;
+  if (!session) router.push('/');
 
-  const handleBuy = async (tier: any) => {
-    setLoading(tier.name);
+  const handleBuild = async () => {
+    if (!name || files.length < 3) return alert('Need name + 3+ images');
+    setBuilding(true);
+
+    const form = new FormData();
+    form.append('name', name);
+    form.append('bio', bio);
+    files.forEach((f, i) => form.append(`file${i}`, f));
+
     try {
-      const res = await fetch('/api/stripe/create-session', {
+      const res = await fetch('/api/build-muse', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId: tier.priceId })
+        body: form,
       });
-
       const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert('Error: ' + (data.error || 'Checkout failed'));
-      }
+      alert(`Muse "${data.name}" built! Check /vault`);
+      router.push('/vault');
     } catch {
-      alert('Network error');
-    } finally {
-      setLoading(null);
+      alert('Build failed — try again');
     }
+    setBuilding(false);
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 md:p-8">
-      <div className="text-center mb-12">
-        <h1 className="text-6xl md:text-8xl font-bold uppercase bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent tracking-widest">
-          MUSE VAULT
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-pink-900 text-white p-6 relative overflow-hidden">
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+        <div className="absolute top-40 right-10 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-yellow-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto">
+        <h1 className="text-6xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-2 animate-pulse">
+          BUILD YOUR AI SIREN
         </h1>
-        <p className="text-xl text-gray-400 mt-2">Pre-Built AI Sirens — Instant Delivery</p>
-      </div>
+        <p className="text-xl text-gray-300 mb-12">3–10 photos. 60 seconds. Empire begins.</p>
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-        {tiers.map((t, i) => (
-          <div
-            key={i}
-            className="relative group"
-          >
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative bg-gray-900 rounded-3xl p-8 ring-1 ring-gray-900/5 backdrop-blur-xl">
-              <h3 className="text-2xl font-bold text-white mb-4 text-center">{t.name}</h3>
-              <p className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-600 mb-6 text-center">
-                {t.price}
-              </p>
-              <ul className="space-y-3 mb-8">
-                {t.perks.map((perk, j) => (
-                  <li key={j} className="flex items-center text-gray-300">
-                    <span className="text-cyan-400 mr-3 text-lg">✓</span>
-                    {perk}
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => handleBuy(t)}
-                disabled={loading === t.name}
-                className={`w-full py-4 rounded-full font-bold text-lg uppercase tracking-wider transition-all transform hover:scale-105 ${
-                  loading === t.name
-                    ? 'bg-gray-700 cursor-not-allowed'
-                    : `bg-gradient-to-r ${t.color} text-white shadow-2xl ${t.glow}`
-                }`}
-              >
-                {loading === t.name ? 'LOADING...' : t.button}
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <input
+            type="text"
+            placeholder="Muse Name (e.g., Luna Siren)"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="bg-transparent border border-purple-500/50 rounded-xl p-4 text-lg focus:outline-none focus:border-purple-400"
+          />
+          <input
+            type="text"
+            placeholder="Bio (e.g., Eternal siren of the deep)"
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            className="bg-transparent border border-purple-500/50 rounded-xl p-4 text-lg focus:outline-none focus:border-purple-400"
+          />
+        </div>
 
-      {/* FOOTER */}
-      <footer className="mt-20 text-center text-sm text-gray-500">
-        <p>© 2025 Eleven Sparks LLC. All rights reserved.</p>
-        <p className="mt-2">
-          By using SirensForge.vip you agree to our{' '}
-          <a href="/terms" className="underline hover:text-cyan-400">Terms of Service</a> ·{' '}
-          <a href="/privacy" className="underline hover:text-cyan-400">Privacy Policy</a> ·{' '}
-          <a href="/faq" className="underline hover:text-cyan-400">FAQ</a> ·{' '}
-          <a href="/dmca" className="underline hover:text-cyan-400">DMCA</a>
+        <div className="mb-8">
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={(e) => setFiles(Array.from(e.target.files || []))}
+            className="block w-full text-sm text-gray-400 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700"
+          />
+          <p className="text-sm text-gray-400 mt-2">Uploaded: {files.length} / 10</p>
+        </div>
+
+        <button
+          onClick={handleBuild}
+          disabled={building || files.length < 3 || !name}
+          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-6 rounded-xl text-2xl disabled:opacity-50 transform hover:scale-105 transition-all"
+        >
+          {building ? 'FORGING MUSE...' : 'BUILD MUSE'}
+        </button>
+
+        <p className="text-center text-gray-400 mt-6">
+          Free tier: 1 muse. Upgrade for unlimited.
         </p>
-      </footer>
+      </div>
+
+      <style jsx>{`
+        @keyframes blob { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-50px) scale(1.1); } 66% { transform: translate(-20px,20px) scale(0.9); } }
+        .animate-blob { animation: blob 7s infinite; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+      `}</style>
     </div>
   );
 }
