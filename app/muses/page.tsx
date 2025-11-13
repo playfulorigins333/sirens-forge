@@ -130,10 +130,15 @@ export default function MusesPage() {
         <div className="space-y-4">
           <textarea placeholder="3–5 Content Pillars" value={formData.contentPillars} onChange={e => update('contentPillars', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
           <div>
-            <p className="text-sm text-purple-300 mb-2">Primary Platforms</p>
-            {['IG', 'TikTok', 'YouTube Shorts', 'LinkedIn'].map(p => (
+            <p className="text-sm text-purple-300 mb-2">Auto-Post Platforms (select all)</p>
+            {['Fanvue', 'X (Twitter)', 'Instagram', 'TikTok'].map(p => (
               <label key={p} className="flex items-center space-x-2 text-sm">
-                <input type="checkbox" checked={formData.primaryPlatforms.includes(p)} onChange={() => toggle('primaryPlatforms', p)} className="rounded text-purple-500" />
+                <input 
+                  type="checkbox" 
+                  checked={formData.primaryPlatforms.includes(p)} 
+                  onChange={() => toggle('primaryPlatforms', p)} 
+                  className="rounded text-purple-500" 
+                />
                 <span>{p}</span>
               </label>
             ))}
