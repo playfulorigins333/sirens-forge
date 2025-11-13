@@ -1,19 +1,38 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 
 export default function MusesPage() {
-  const { data: session, status } = useSession();
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [building, setBuilding] = useState(false);
 
-  if (status === 'loading') return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>;
-  if (!session) router.push('/');
+  // Client-only auth check
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const res = await fetch('/api/auth/session');
+        const data = await res.json();
+        setUser(data.user || null);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    check();
+  }, []);
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>;
+  if (!user) {
+    router.push('/');
+    return null;
+  }
 
   const handleBuild = async () => {
     if (!name || files.length < 3) return alert('Need name + 3+ images');
