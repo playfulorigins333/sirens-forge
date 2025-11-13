@@ -179,13 +179,18 @@ export default function MusesPage() {
       title: "Relationship Style",
       content: (
         <div className="space-y-4">
-          <select value={formData.relationshipStyle} onChange={e => update('relationshipStyle', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white">
-            <option value="">Relationship Style</option>
-            <option>Mentor</option>
-            <option>Bestie</option>
-            <option>Big Sis</option>
-            <option>Coach</option>
-            <option>Muse</option>
+          <select 
+            value={formData.relationshipStyle} 
+            onChange={e => update('relationshipStyle', e.target.value)} 
+            className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white text-sm appearance-none"
+            style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em' }}
+          >
+            <option value="" disabled className="text-gray-500">Select relationship style...</option>
+            <option value="mentor">Mentor</option>
+            <option value="bestie">Bestie</option>
+            <option value="big-sis">Big Sister</option>
+            <option value="coach">Coach</option>
+            <option value="muse">Muse</option>
           </select>
           <input placeholder="How should audience feel?" value={formData.audienceFeel} onChange={e => update('audienceFeel', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
           <input placeholder="Online Love Language" value={formData.loveLanguage} onChange={e => update('loveLanguage', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
