@@ -28,7 +28,6 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-pink-900 text-white flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Blobs */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-10 left-10 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
         <div className="absolute top-40 right-10 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
@@ -71,14 +70,9 @@ export default function SignInPage() {
 
         <div className="mt-6 text-center">
           <p className="text-gray-400">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <a href="/auth/signup" className="text-purple-400 hover:text-purple-300 font-bold">
               Sign up
-            </a>
-          </p>
-          <p className="text-sm text-gray-500 mt-2">
-            <a href="/auth/forgot" className="hover:text-purple-400">
-              Forgot password?
             </a>
           </p>
         </div>
