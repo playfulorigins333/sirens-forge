@@ -1,146 +1,86 @@
 'use client';
 
-import useSWR from 'swr';
 import { useState } from 'react';
 
-const fetcher = (url: string) => fetch(url).then(r => r.json());
+export default function HomePage() {
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
 
-function LiveCounter() {
-  const { data } = useSWR('/api/counters', fetcher, { refreshInterval: 3000 });
+  if (!ageConfirmed) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-900 via-black to-pink-900 text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-red-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute top-40 right-10 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+        </div>
 
-  const earlyMonthly = data?.early_monthly_sold || 0;
-  const earlyLifetime = data?.early_lifetime_sold || 0;
-  const ogThrone = data?.og_throne_sold || 0;
+        <div className="relative z-10 text-center max-w-2xl">
+          <h1 className="text-8xl font-black text-red-500 mb-6">18+ ONLY</h1>
+          <p className="text-2xl text-gray-300 mb-8">
+            Sirens Forge contains <strong>adult AI-generated content</strong>.  
+            You must be 18 or older to enter.
+          </p>
+          <button
+            onClick={() => setAgeConfirmed(true)}
+            className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white px-16 py-6 rounded-full font-black text-2xl transform hover:scale-110 transition-all"
+          >
+            I AM 18+ — ENTER THE EMPIRE
+          </button>
+        </div>
+
+        <style jsx>{`
+          @keyframes blob { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-50px) scale(1.1); } 66% { transform: translate(-20px,20px) scale(0.9); } }
+          .animate-blob { animation: blob 7s infinite; }
+          .animation-delay-2000 { animation-delay: 2s; }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
-    <div className="text-sm tracking-widest text-cyan-400 animate-pulse font-medium">
-      EARLY BIRDS: {120 - earlyMonthly}/120 | LIFETIMES: {50 - earlyLifetime}/50 | THRONES: {10 - ogThrone}/10
-    </div>
-  );
-}
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-pink-900 text-white p-6 relative overflow-hidden">
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+        <div className="absolute top-40 right-10 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-yellow-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+      </div>
 
-async function buy(priceId: string, tier: string) {
-  const res = await fetch('/api/create-checkout', {
-    method: 'POST',
-    body: JSON.stringify({ priceId, tier }),
-    headers: { 'Content-Type': 'application/json' },
-  });
-  const { url } = await res.json();
-  window.location.href = url;
-}
-
-export default function Home() {
-  return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
-      {/* Header */}
-      <header className="border-b border-white/10 backdrop-blur-xl bg-black/80 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
-          <h1 className="text-4xl font-bold tracking-widest bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-            SirensForge<span className="font-extrabold text-white">.vip</span>
-          </h1>
-          <LiveCounter />
-        </div>
-      </header>
-
-      {/* Hero */}
-      <section className="flex-1 flex items-center justify-center px-6">
-        <div className="text-center max-w-5xl">
-          <h1 className="text-7xl md:text-9xl font-extralight leading-tight mb-6">
-            SIRENSFORGE<br />
-            <span className="font-bold bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-              .VIP<br />
-            </span>
-          </h1>
-          <h2 className="text-5xl md:text-7xl font-light text-gray-300 mb-10">
-            Forge Your Perfect AI Siren<br />
-          </h2>
-          <p className="text-xl md:text-2xl text-gray-400 mb-16 leading-relaxed max-w-3xl mx-auto">
-            Hyper-realistic custom models · 100% private · auto-post to Fanvue · $10k+/week on autopilot
-          </p>
-
-          {/* STRIPE BUTTONS — FULL 11-TIER MENU — ZERO 404 — LIVE MONEY */}
-          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
-            <button
-              onClick={() => buy('price_1YOUR_STARTER_ID', 'Starter Hit')}
-              className="px-24 py-8 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-3xl font-semibold hover:scale-105 transition-all shadow-2xl"
-            >
-              $12 Starter Hit — 5 Gen Only
-            </button>
-
-            <button
-              onClick={() => buy('price_1YOUR_ETERNAL_ID', 'Eternal Seat')}
-              className="px-24 py-8 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-3xl font-semibold hover:scale-105 transition-all shadow-2xl"
-            >
-              Claim Eternal Seat — $29.99/mo
-            </button>
-
-            <button
-              onClick={() => buy('price_1YOUR_LIFETIME_ID', 'Lifetime')}
-              className="px-24 py-8 border-2 border-cyan-500 rounded-full text-3xl font-semibold hover:bg-cyan-500/10 transition-all"
-            >
-              Lifetime Early Bird — $97
-            </button>
-
-            <button
-              onClick={() => buy('price_1YOUR_THRONE_ID', 'Throne')}
-              className="px-24 py-8 bg-gradient-to-r from-yellow-600 to-orange-600 rounded-full text-3xl font-semibold hover:scale-105 transition-all shadow-2xl"
-            >
-              Claim Throne — $497
-            </button>
-          </div>
-
-          <p className="text-sm text-gray-500 mt-16">
-            First 25 seats = infinite tokens · 50% lifetime royalties · crowned forever
-          </p>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-32 px-6 border-t border-white/10">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-16 text-center">
-          <div className="hover:scale-105 transition-all">
-            <svg className="w-20 h-20 mx-auto mb-6 stroke-cyan-400 fill-none stroke-2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10"/>
-              <circle cx="12" cy="12" r="4" fill="currentColor"/>
-            </svg>
-            <h3 className="text-2xl font-medium mb-3">Face-Lock Precision</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">15-second multi-ref video forge</p>
-          </div>
-          <div className="hover:scale-105 transition-all">
-            <svg className="w-20 h-20 mx-auto mb-6 stroke-purple-400 fill-none stroke-2" viewBox="0 0 24 24">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-            <h3 className="text-2xl font-medium mb-3">Auto-Post Empire</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">Fanvue · Insta · TikTok · X — hands-free</p>
-          </div>
-          <div className="hover:scale-105 transition-all">
-            <svg className="w-20 h-20 mx-auto mb-6 stroke-pink-400 fill-none stroke-2" viewBox="0 0 24 24">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
-            <h3 className="text-2xl font-medium mb-3">Eternal Gods</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">25 OGs = ∞ tokens + 50% lifetime</p>
-          </div>
-          <div className="hover:scale-105 transition-all">
-            <svg className="w-20 h-20 mx-auto mb-6 stroke-cyan-400 fill-none stroke-2" viewBox="0 0 24 24">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-            <h3 className="text-2xl font-medium mb-3">Fortress Privacy</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">Burn after 30 days · never retrained</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-white/10 py-12 px-6 text-center">
-        <p className="text-xs text-gray-500 leading-relaxed">
-          © 2025 Eleven Sparks LLC. All rights reserved. <br /><br />
-          By using SirensForge.vip you agree to our{' '}
-          <a href="/tos" className="underline hover:text-cyan-400">Terms of Service</a> ·{' '}
-          <a href="/privacy" className="underline hover:text-cyan-400">Privacy Policy</a> ·{' '}
-          <a href="/faq" className="underline hover:text-cyan-400">FAQ</a> ·{' '}
-          <a href="/dmca" className="underline hover:text-cyan-400">DMCA</a>
+      <div className="relative z-10 max-w-5xl mx-auto text-center mt-24">
+        <h1 className="text-8xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-6 animate-pulse">
+          SIRENS FORGE
+        </h1>
+        <h2 className="text-5xl font-bold text-white mb-6">AI INFLUENCER EMPIRE</h2>
+        <p className="text-2xl text-gray-300 mb-10 max-w-3xl mx-auto">
+          Build AI sirens in 60 seconds. Auto-post to <strong>Fanvue, X, Instagram, TikTok</strong>.  
+          Earn <strong>80%</strong> of all revenue. We take <strong>20%</strong>.  
+          <strong>Zero uploads. Zero code. Zero touch.</strong>
         </p>
-      </footer>
+
+        <div className="flex justify-center gap-6 mb-12">
+          <a
+            href="/auth/signin"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-16 py-6 rounded-full font-black text-2xl transform hover:scale-110 transition-all"
+          >
+            SIGN IN
+          </a>
+          <a
+            href="/pricing"
+            className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white px-16 py-6 rounded-full font-black text-2xl transform hover:scale-110 transition-all"
+          >
+            VIEW PRICING
+ |        </a>
+        </div>
+
+        <p className="text-lg text-gray-400">
+          No credit card. No setup. Just empire.
+        </p>
+      </div>
+
+      <style jsx>{`
+        @keyframes blob { 0%,100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-50px) scale(1.1); } 66% { transform: translate(-20px,20px) scale(0.9); } }
+        .animate-blob { animation: blob 7s infinite; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+      `}</style>
     </div>
   );
 }
