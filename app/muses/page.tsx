@@ -1,60 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function MusesPage() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [building, setBuilding] = useState(false);
 
-  // Client-only auth check
-  useEffect(() => {
-    const check = async () => {
-      try {
-        const res = await fetch('/api/auth/session');
-        const data = await res.json();
-        setUser(data.user || null);
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    check();
-  }, []);
-
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>;
-  if (!user) {
-    router.push('/');
-    return null;
-  }
-
-  const handleBuild = async () => {
+  const handleBuild = () => {
     if (!name || files.length < 3) return alert('Need name + 3+ images');
-    setBuilding(true);
-
-    const form = new FormData();
-    form.append('name', name);
-    form.append('bio', bio);
-    files.forEach((f, i) => form.append(`file${i}`, f));
-
-    try {
-      const res = await fetch('/api/build-muse', {
-        method: 'POST',
-        body: form,
-      });
-      const data = await res.json();
-      alert(`Muse "${data.name}" built! Check /vault`);
-      router.push('/vault');
-    } catch {
-      alert('Build failed — try again');
-    }
-    setBuilding(false);
+    alert('Muse built! (Mock)');
   };
 
   return (
