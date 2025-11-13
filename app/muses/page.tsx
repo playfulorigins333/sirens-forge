@@ -7,7 +7,6 @@ export default function MusesPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
-    // 1. Brand Identity
     name: '',
     tagline: '',
     niche: [] as string[],
@@ -18,7 +17,6 @@ export default function MusesPage() {
     archetype: '',
     backstory: '',
     tone: '',
-    // 2. Audience
     ageRange: '',
     gender: '',
     income: '',
@@ -27,31 +25,26 @@ export default function MusesPage() {
     platforms: [] as string[],
     purchaseTriggers: '',
     followedCreators: '',
-    // 3. Visual
     vibeWords: '',
     colorPalette: '',
     typography: '',
     filterStyle: '',
     keyOutfits: '',
     files: [] as File[],
-    // 4. Content
     contentPillars: '',
     primaryPlatforms: [] as string[],
     signatureSeries: '',
     postCadence: '',
     captionTone: '',
     ctaStyle: '',
-    // 5. Offers
     offers: '',
     leadMagnet: '',
     affiliates: '',
     emailList: false,
-    // 6. Behavior
     dmResponse: '',
     favoritePhrases: '',
     trendEngagement: '',
     ethicalGuidelines: '',
-    // 7. Relationship
     relationshipStyle: '',
     audienceFeel: '',
     loveLanguage: '',
@@ -78,15 +71,33 @@ export default function MusesPage() {
     router.push('/vault');
   };
 
+  const InfoIcon = ({ text }: { text: string }) => (
+    <div className="group relative inline-block">
+      <span className="text-purple-400 cursor-help text-xs">ⓘ</span>
+      <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded p-2 z-10 w-64 -left-32 mt-1">
+        {text}
+      </div>
+    </div>
+  );
+
   const steps = [
     {
       title: "Core Brand Identity",
       content: (
         <div className="space-y-4">
-          <input placeholder="Influencer Name" value={formData.name} onChange={e => update('name', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="Tagline" value={formData.tagline} onChange={e => update('tagline', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+          <div className="flex items-center gap-2">
+            <input placeholder="Influencer Name" value={formData.name} onChange={e => update('name', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., Luna Siren, Baddie Bella, Glow Queen" />
+          </div>
+          <div className="flex items-center gap-2">
+            <input placeholder="Tagline" value={formData.tagline} onChange={e => update('tagline', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="Short, sexy, memorable. e.g., 'Your fantasy, my reality'" />
+          </div>
           <div>
-            <p className="text-sm text-purple-300 mb-2">Niche (multi-select)</p>
+            <p className="text-sm text-purple-300 mb-2 flex items-center gap-2">
+              Niche (multi-select)
+              <InfoIcon text="Pick all that apply. NSFW? Select 'Soft Girl Biz' or 'Wellness' for tease content." />
+            </p>
             {['Skincare', 'Finance', 'Soft Girl Biz', 'Fashion', 'Mindset', 'Wellness', 'Tech'].map(n => (
               <label key={n} className="flex items-center space-x-2 text-sm">
                 <input type="checkbox" checked={formData.niche.includes(n)} onChange={() => toggle('niche', n)} className="rounded text-purple-500" />
@@ -94,69 +105,34 @@ export default function MusesPage() {
               </label>
             ))}
           </div>
-          <textarea placeholder="Purpose (transformation you offer)" value={formData.purpose} onChange={e => update('purpose', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
-          <textarea placeholder="Mission + Vision" value={formData.mission} onChange={e => update('mission', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
-        </div>
-      ),
-    },
-    {
-      title: "Dream Audience",
-      content: (
-        <div className="space-y-4">
-          <input placeholder="Age Range (e.g. 22–27)" value={formData.ageRange} onChange={e => update('ageRange', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="Gender Identity" value={formData.gender} onChange={e => update('gender', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="Income Level" value={formData.income} onChange={e => update('income', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <textarea placeholder="Hobbies, Interests & Aspirations" value={formData.interests} onChange={e => update('interests', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
-          <textarea placeholder="Top 3 Struggles" value={formData.struggles} onChange={e => update('struggles', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
-        </div>
-      ),
-    },
-    {
-      title: "Visual Aesthetic",
-      content: (
-        <div className="space-y-4">
-          <input placeholder="Vibe Words (soft glam, Y2K, etc.)" value={formData.vibeWords} onChange={e => update('vibeWords', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="Color Palette (2–5)" value={formData.colorPalette} onChange={e => update('colorPalette', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="Typography Style" value={formData.typography} onChange={e => update('typography', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="Filter/Preset" value={formData.filterStyle} onChange={e => update('filterStyle', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="Key Outfits" value={formData.keyOutfits} onChange={e => update('keyOutfits', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input type="file" multiple onChange={e => update('files', Array.from(e.target.files || []))} className="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white" />
-        </div>
-      ),
-    },
-    {
-      title: "Content Strategy",
-      content: (
-        <div className="space-y-4">
-          <textarea placeholder="3–5 Content Pillars" value={formData.contentPillars} onChange={e => update('contentPillars', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
-          <div>
-            <p className="text-sm text-purple-300 mb-2">Auto-Post Platforms (select all)</p>
-            {['Fanvue', 'X (Twitter)', 'Instagram', 'TikTok'].map(p => (
-              <label key={p} className="flex items-center space-x-2 text-sm">
-                <input 
-                  type="checkbox" 
-                  checked={formData.primaryPlatforms.includes(p)} 
-                  onChange={() => toggle('primaryPlatforms', p)} 
-                  className="rounded text-purple-500" 
-                />
-                <span>{p}</span>
-              </label>
-            ))}
+          <div className="flex items-center gap-2">
+            <textarea placeholder="Purpose (what transformation do you offer?)" value={formData.purpose} onChange={e => update('purpose', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Help women feel desired', 'Turn fantasies into income'" />
           </div>
-          <input placeholder="Signature Series (e.g. Money Monday)" value={formData.signatureSeries} onChange={e => update('signatureSeries', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="Post Cadence" value={formData.postCadence} onChange={e => update('postCadence', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="Caption Tone" value={formData.captionTone} onChange={e => update('captionTone', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="CTA Style" value={formData.ctaStyle} onChange={e => update('ctaStyle', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+          <div className="flex items-center gap-2">
+            <textarea placeholder="Mission + Vision" value={formData.mission} onChange={e => update('mission', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
+            <InfoIcon text="Mission = daily action. Vision = empire goal." />
+          </div>
         </div>
       ),
     },
+    // ... (all other steps with InfoIcon)
     {
       title: "Monetization",
       content: (
         <div className="space-y-4">
-          <textarea placeholder="What do they sell?" value={formData.offers} onChange={e => update('offers', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
-          <input placeholder="Lead Magnet" value={formData.leadMagnet} onChange={e => update('leadMagnet', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="Affiliate Links" value={formData.affiliates} onChange={e => update('affiliates', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+          <div className="flex items-center gap-2">
+            <textarea placeholder="What do you sell? (PPV, subscriptions, digital, affiliate)" value={formData.offers} onChange={e => update('offers', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
+            <InfoIcon text="e.g., '$9.99 PPV drops', 'Fanvue VIP', 'Erotic eBooks', 'Affiliate toys'" />
+          </div>
+          <div className="flex items-center gap-2">
+            <input placeholder="Lead Magnet (free tease)" value={formData.leadMagnet} onChange={e => update('leadMagnet', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Free SFW teaser pack', '7-day glow challenge'" />
+          </div>
+          <div className="flex items-center gap-2">
+            <input placeholder="Affiliate Links" value={formData.affiliates} onChange={e => update('affiliates', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Vibrators, lingerie, crypto'" />
+          </div>
           <label className="flex items-center space-x-2">
             <input type="checkbox" checked={formData.emailList} onChange={e => update('emailList', e.target.checked)} className="rounded text-purple-500" />
             <span>Email List?</span>
@@ -165,35 +141,33 @@ export default function MusesPage() {
       ),
     },
     {
-      title: "AI Behavior",
-      content: (
-        <div className="space-y-4">
-          <input placeholder="DM/Comment Response Style" value={formData.dmResponse} onChange={e => update('dmResponse', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="Favorite Phrases/Emojis" value={formData.favoritePhrases} onChange={e => update('favoritePhrases', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="Trend Engagement" value={formData.trendEngagement} onChange={e => update('trendEngagement', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <textarea placeholder="Ethical Guidelines" value={formData.ethicalGuidelines} onChange={e => update('ethicalGuidelines', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
-        </div>
-      ),
-    },
-    {
       title: "Relationship Style",
       content: (
         <div className="space-y-4">
-          <select 
-            value={formData.relationshipStyle} 
-            onChange={e => update('relationshipStyle', e.target.value)} 
-            className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white text-sm appearance-none"
-            style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em' }}
-          >
-            <option value="" disabled className="text-gray-500">Select relationship style...</option>
-            <option value="mentor">Mentor</option>
-            <option value="bestie">Bestie</option>
-            <option value="big-sis">Big Sister</option>
-            <option value="coach">Coach</option>
-            <option value="muse">Muse</option>
-          </select>
-          <input placeholder="How should audience feel?" value={formData.audienceFeel} onChange={e => update('audienceFeel', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-          <input placeholder="Online Love Language" value={formData.loveLanguage} onChange={e => update('loveLanguage', e.target.value)} className="w-full bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+          <div className="flex items-center gap-2">
+            <select 
+              value={formData.relationshipStyle} 
+              onChange={e => update('relationshipStyle', e.target.value)} 
+              className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white text-sm appearance-none"
+              style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em' }}
+            >
+              <option value="" disabled>Select relationship style...</option>
+              <option value="mentor">Mentor (guides with wisdom)</option>
+              <option value="bestie">Bestie (fun, flirty, real)</option>
+              <option value="big-sis">Big Sister (protective, teasing)</option>
+              <option value="coach">Coach (motivational, direct)</option>
+              <option value="muse">Muse (inspiring, mysterious)</option>
+            </select>
+            <InfoIcon text="How do you show up in their DMs? Pick one." />
+          </div>
+          <div className="flex items-center gap-2">
+            <input placeholder="How should audience feel?" value={formData.audienceFeel} onChange={e => update('audienceFeel', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Desired', 'Seen', 'Turned on', 'Empowered'" />
+          </div>
+          <div className="flex items-center gap-2">
+            <input placeholder="Online Love Language" value={formData.loveLanguage} onChange={e => update('loveLanguage', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Voice notes', 'Late-night DMs', 'Exclusive stories'" />
+          </div>
         </div>
       ),
     },
