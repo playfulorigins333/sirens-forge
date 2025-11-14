@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -26,7 +26,7 @@ export default function ForgePage() {
     purchaseTriggers: '',
     followedCreators: '',
     vibeWords: '',
-    colorPalette: '',
+    colorPalette: '',  // ← FIXED: was 'семь'
     typography: '',
     filterStyle: '',
     keyOutfits: '',
@@ -72,7 +72,7 @@ export default function ForgePage() {
   };
 
   const InfoIcon = ({ text }: { text: string }) => (
-    <div className="group relative inline-block">
+    <div className="group relative inline-block ml-2">
       <span className="text-purple-400 cursor-help text-xs">i</span>
       <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded p-2 z-10 w-64 -left-32 mt-1">
         {text}
@@ -87,18 +87,18 @@ export default function ForgePage() {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <input placeholder="Influencer Name" value={formData.name} onChange={e => update('name', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-            <InfoIcon text="e.g., Luna Siren, Baddie Bella, Glow Queen" />
+            <InfoIcon text="e.g., Luna Siren, King Kai, Trans Titan, Non-Binary Nova" />
           </div>
           <div className="flex items-center gap-2">
             <input placeholder="Tagline" value={formData.tagline} onChange={e => update('tagline', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-            <InfoIcon text="Short, sexy, memorable. e.g., 'Your fantasy, my reality'" />
+            <InfoIcon text="e.g., 'Your fantasy, my reality', 'Born to dominate', 'Unapologetically me'" />
           </div>
           <div>
             <p className="text-sm text-purple-300 mb-2 flex items-center gap-2">
               Niche (multi-select)
-              <InfoIcon text="Pick all that apply. NSFW? Select 'Soft Girl Biz' or 'Wellness' for tease content." />
+              <InfoIcon text="All genders & styles: Skincare, Finance, Fashion, Fitness, Gaming, Wellness, Tech" />
             </p>
-            {['Skincare', 'Finance', 'Soft Girl Biz', 'Fashion', 'Mindset', 'Wellness', 'Tech'].map(n => (
+            {['Skincare', 'Finance', 'Fashion', 'Mindset', 'Wellness', 'Tech', 'Fitness', 'Gaming'].map(n => (
               <label key={n} className="flex items-center space-x-2 text-sm">
                 <input type="checkbox" checked={formData.niche.includes(n)} onChange={() => toggle('niche', n)} className="rounded text-purple-500" />
                 <span>{n}</span>
@@ -106,8 +106,8 @@ export default function ForgePage() {
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <textarea placeholder="Purpose (what transformation do you offer?)" value={formData.purpose} onChange={e => update('purpose', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
-            <InfoIcon text="e.g., 'Help women feel desired', 'Turn fantasies into income'" />
+            <textarea placeholder="Purpose" value={formData.purpose} onChange={e => update('purpose', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Help people feel desired', 'Build confidence', 'Inspire financial freedom'" />
           </div>
           <div className="flex items-center gap-2">
             <textarea placeholder="Mission + Vision" value={formData.mission} onChange={e => update('mission', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
@@ -117,16 +117,116 @@ export default function ForgePage() {
       ),
     },
     {
+      title: "Audience DNA",
+      content: (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <input placeholder="Age Range" value={formData.ageRange} onChange={e => update('ageRange', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., 18-24, 25-34" />
+          </div>
+          <div className="flex items-center gap-2">
+            <input placeholder="Gender" value={formData.gender} onChange={e => update('gender', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., Female, Male, Non-Binary" />
+          </div>
+          <div className="flex items-center gap-2">
+            <input placeholder="Income Level" value={formData.income} onChange={e => update('income', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., $50K+, $100K+, $250K+" />
+          </div>
+          <div className="flex items-center gap-2">
+            <textarea placeholder="Interests" value={formData.interests} onChange={e => update('interests', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
+            <InfoIcon text="e.g., Yoga, Crypto, Luxury Fashion" />
+          </div>
+          <div className="flex items-center gap-2">
+            <textarea placeholder="Struggles" value={formData.struggles} onChange={e => update('struggles', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Feeling invisible', 'No time for self-care'" />
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Content Strategy",
+      content: (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <textarea placeholder="Content Pillars" value={formData.contentPillars} onChange={e => update('contentPillars', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Morning Routine', 'Behind the Scenes', 'Q&A'" />
+          </div>
+          <div>
+            <p className="text-sm text-purple-300 mb-2 flex items-center gap-2">
+              Primary Platforms
+              <InfoIcon text="Where do they live? TikTok, IG, X, YouTube?" />
+            </p>
+            {['TikTok', 'Instagram', 'X', 'YouTube', 'Fansly', 'OnlyFans'].map(p => (
+              <label key={p} className="flex items-center space-x-2 text-sm">
+                <input type="checkbox" checked={formData.primaryPlatforms.includes(p)} onChange={() => toggle('primaryPlatforms', p)} className="rounded text-purple-500" />
+                <span>{p}</span>
+              </label>
+            ))}
+          </div>
+          <div className="flex items-center gap-2">
+            <input placeholder="Signature Series" value={formData.signatureSeries} onChange={e => update('signatureSeries', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Siren Sundays', 'Midnight Confessions'" />
+          </div>
+          <div className="flex items-center gap-2">
+            <input placeholder="Post Cadence" value={formData.postCadence} onChange={e => update('postCadence', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., '3x/week', 'Daily'" />
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Voice & Style",
+      content: (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <textarea placeholder="Caption Tone" value={formData.captionTone} onChange={e => update('captionTone', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Flirty & teasing', 'Direct & dominant'" />
+          </div>
+          <div className="flex items-center gap-2">
+            <input placeholder="CTA Style" value={formData.ctaStyle} onChange={e => update('ctaStyle', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., 'DM me', 'Link in bio', 'Tap to unlock'" />
+          </div>
+          <div className="flex items-center gap-2">
+            <textarea placeholder="Favorite Phrases" value={formData.favoritePhrases} onChange={e => update('favoritePhrases', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Your wish is my command', 'Let me show you'" />
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Visual Identity",
+      content: (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <input placeholder="Color Palette" value={formData.colorPalette} onChange={e => update('colorPalette', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Neon Pink + Black', 'Gold + Ivory'" />
+          </div>
+          <div className="flex items-center gap-2">
+            <input placeholder="Typography" value={formData.typography} onChange={e => update('typography', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Playful script', 'Bold sans-serif'" />
+          </div>
+          <div className="flex items-center gap-2">
+            <input placeholder="Filter Style" value={formData.filterStyle} onChange={e => update('filterStyle', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Vintage', 'Cinematic', 'High-contrast'" />
+          </div>
+          <div className="flex items-center gap-2">
+            <textarea placeholder="Key Outfits" value={formData.keyOutfits} onChange={e => update('keyOutfits', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Lace lingerie', 'Silk robe', 'Leather harness'" />
+          </div>
+        </div>
+      ),
+    },
+    {
       title: "Monetization",
       content: (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <textarea placeholder="What do you sell? (PPV, subscriptions, digital, affiliate)" value={formData.offers} onChange={e => update('offers', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
-            <InfoIcon text="e.g., '$9.99 PPV drops', 'Fanvue VIP', 'Erotic eBooks', 'Affiliate toys'" />
+            <textarea placeholder="What do you sell?" value={formData.offers} onChange={e => update('offers', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white h-24 placeholder-gray-400" />
+            <InfoIcon text="e.g., '$9.99 PPV', 'VIP Fanvue', 'Erotic eBooks'" />
           </div>
           <div className="flex items-center gap-2">
-            <input placeholder="Lead Magnet (free tease)" value={formData.leadMagnet} onChange={e => update('leadMagnet', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
-            <InfoIcon text="e.g., 'Free SFW teaser pack', '7-day glow challenge'" />
+            <input placeholder="Lead Magnet" value={formData.leadMagnet} onChange={e => update('leadMagnet', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
+            <InfoIcon text="e.g., 'Free teaser pack', '7-day glow challenge'" />
           </div>
           <div className="flex items-center gap-2">
             <input placeholder="Affiliate Links" value={formData.affiliates} onChange={e => update('affiliates', e.target.value)} className="flex-1 bg-white/10 border border-purple-500/50 rounded-xl p-4 text-white placeholder-gray-400" />
