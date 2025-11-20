@@ -1,10 +1,11 @@
 import Image from "next/image";
 import type { MuseProfile } from "@/muses/data";
 
-interface MuseCardProps {
+type MuseCardProps = {
   muse: MuseProfile;
-}
+};
 
+// Selection handlers removed until Muse Detail flow is available.
 export default function MuseCard({ muse }: MuseCardProps) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-4 shadow-lg">
