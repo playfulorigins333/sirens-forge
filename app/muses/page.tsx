@@ -1,8 +1,12 @@
 'use client';
 
-import Link from 'next/link';
+import { MUSES } from "@/muses/data";
+import type { MuseProfile } from "@/muses/data";
+import Link from "next/link";
 
 export default function MusesLanding() {
+  const muses: MuseProfile[] = MUSES;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black text-white">
       {/* Header */}
@@ -32,6 +36,7 @@ export default function MusesLanding() {
           <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-12">
             Pre-built AI Sirens — Instant Delivery
           </p>
+          <p className="sr-only">Currently featuring {muses.length} AI muses.</p>
 
           {/* SFW / NSFW Buttons */}
           <div className="flex justify-center gap-6 mb-12 flex-wrap">
