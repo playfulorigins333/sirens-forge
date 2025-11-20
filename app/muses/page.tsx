@@ -1,19 +1,14 @@
 import MuseCard from "@/components/MuseCard";
+import MuseUnlockButton from "@/components/MuseUnlockButton";
 import { MUSES } from "@/muses/data";
 
 export default function MuseStorePage() {
+  // Placeholder: nothing is unlocked yet
+  const unlockedMuses: string[] = [];
+
   return (
     <div className="min-h-screen w-full px-6 py-10">
-
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Muse Store</h1>
-        <p className="text-zinc-400 text-sm max-w-2xl">
-          Browse AI muses built from public creator archetypes and LoRA inspirations.
-          All muses are compatible with SFW + NSFW generations. No real person likeness.
-        </p>
-      </div>
-
-      {/* GRID */}
+      <h1 className="text-3xl font-bold mb-6">Muse Store</h1>
       <div
         className="
           grid
@@ -21,14 +16,17 @@ export default function MuseStorePage() {
           sm:grid-cols-2
           md:grid-cols-3
           lg:grid-cols-4
-          gap-8
+          gap-6
         "
       >
         {MUSES.map((muse) => (
-          <MuseCard
-            key={muse.id}
-            muse={muse}
-          />
+          <div key={muse.id} className="flex flex-col">
+            <MuseCard muse={muse} />
+            <MuseUnlockButton
+              museId={muse.id}
+              unlocked={unlockedMuses.includes(muse.id)}
+            />
+          </div>
         ))}
       </div>
     </div>
