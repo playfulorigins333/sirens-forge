@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { MuseProfile } from "@/src/muses/data";
+import type { MuseProfile } from "@/muses/data";
 
 interface MuseCardProps {
   muse: MuseProfile;
