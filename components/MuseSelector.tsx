@@ -18,8 +18,9 @@ export default function MuseSelector({ value, onChange }: Props) {
             <button
               key={m.id}
               onClick={() => onChange(m.id)}
-              className={`border rounded-xl p-3 transition-all text-left bg-zinc-900 hover:bg-zinc-800
-                ${active ? "border-fuchsia-400 shadow-lg" : "border-zinc-700"}`}
+              className={`border rounded-xl p-3 transition-all text-left bg-zinc-900 hover:bg-zinc-800 ${
+                active ? "border-fuchsia-400 shadow-lg" : "border-zinc-700"
+              }`}
             >
               <div className="w-full aspect-square relative rounded-lg overflow-hidden mb-3">
                 <Image
@@ -31,27 +32,8 @@ export default function MuseSelector({ value, onChange }: Props) {
                 />
               </div>
 
-              <div className="font-semibold text-lg">{m.label}</div>
-              <p className="text-sm text-zinc-400 mt-1">{m.description}</p>
-
-              {/* EXPLICIT LEVEL BADGES */}
-              <div className="flex gap-2 mt-3 flex-wrap">
-                {m.explicitLevels.map((lvl) => (
-                  <span
-                    key={lvl}
-                    className={`px-2 py-0.5 rounded text-xs border 
-                      ${
-                        lvl === "ultra"
-                          ? "border-red-500 text-red-300"
-                          : lvl === "nsfw"
-                          ? "border-yellow-400 text-yellow-300"
-                          : "border-green-400 text-green-300"
-                      }`}
-                  >
-                    {lvl.toUpperCase()}
-                  </span>
-                ))}
-              </div>
+              <div className="text-sm font-semibold">{m.label}</div>
+              <div className="text-xs opacity-70">{m.category}</div>
             </button>
           );
         }

@@ -1,5 +1,6 @@
 'use client';
 
+import MuseSelector from "@/components/MuseSelector";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
