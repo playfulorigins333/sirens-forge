@@ -9,7 +9,7 @@ if (!stripeSecretKey) {
 
 // Force correct API version — ignore TypeScript error
 export const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2024-06-20' as any, // ← THIS FIXES IT
+  apiVersion: "2025-10-29.clover" as any, // ← THIS FIXES IT
 })
 
 // Optional type
