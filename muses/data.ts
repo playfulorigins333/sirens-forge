@@ -14,6 +14,7 @@ export type MuseProfile = {
   preview: string; // path under /public, e.g. /muses/aitana.png
   storeEnabled: boolean;
   explicitLevels: ExplicitLevel[];
+  useCases: string[];
 };
 
 export const MUSES: MuseProfile[] = [
@@ -35,6 +36,11 @@ export const MUSES: MuseProfile[] = [
     preview: "/muses/aitana_lopez.png",
     storeEnabled: true,
     explicitLevels: ["sfw", "nsfw", "ultra"],
+    useCases: [
+      "SFW portraits",
+      "NSFW optional",
+      "Gym-inspired lifestyle content",
+    ],
   },
   {
     id: "lil_miquela",
@@ -53,6 +59,11 @@ export const MUSES: MuseProfile[] = [
     preview: "/muses/lil_miquela.png",
     storeEnabled: true,
     explicitLevels: ["sfw", "nsfw", "ultra"],
+    useCases: [
+      "Brand-style social content",
+      "Editorial fashion spreads",
+      "Expressive storytelling posts",
+    ],
   },
   {
     id: "emily_pellegrini",
@@ -71,6 +82,11 @@ export const MUSES: MuseProfile[] = [
     preview: "/muses/emily_pellegrini.png",
     storeEnabled: true,
     explicitLevels: ["sfw", "nsfw", "ultra"],
+    useCases: [
+      "SFW glam sets",
+      "Lingerie promos",
+      "Custom request vaults",
+    ],
   },
   {
     id: "kenza_layli",
@@ -89,6 +105,11 @@ export const MUSES: MuseProfile[] = [
     preview: "/muses/kenza_layli.png",
     storeEnabled: true,
     explicitLevels: ["sfw", "nsfw", "ultra"],
+    useCases: [
+      "Cultural fusion fashion",
+      "Travel-inspired reels",
+      "SFW to NSFW funnels",
+    ],
   },
   {
     id: "bella_blonde",
@@ -107,6 +128,11 @@ export const MUSES: MuseProfile[] = [
     preview: "/muses/bella_blonde.png",
     storeEnabled: true,
     explicitLevels: ["sfw", "nsfw", "ultra"],
+    useCases: [
+      "Beach promo shoots",
+      "Teasing social clips",
+      "Fast-turnover vault drops",
+    ],
   },
 
   // 🔥 MALE MUSES
@@ -127,6 +153,11 @@ export const MUSES: MuseProfile[] = [
     preview: "/muses/liam_nikuro.png",
     storeEnabled: true,
     explicitLevels: ["sfw", "nsfw", "ultra"],
+    useCases: [
+      "Studio session content",
+      "Streetwear lookbooks",
+      "Music promo visuals",
+    ],
   },
   {
     id: "knox_frost",
@@ -145,6 +176,11 @@ export const MUSES: MuseProfile[] = [
     preview: "/muses/knox_frost.png",
     storeEnabled: true,
     explicitLevels: ["sfw", "nsfw", "ultra"],
+    useCases: [
+      "Gym lifestyle posts",
+      "SFW to NSFW transitions",
+      "High-energy reels",
+    ],
   },
   {
     id: "koffi_gram",
@@ -163,6 +199,11 @@ export const MUSES: MuseProfile[] = [
     preview: "/muses/koffi_gram.png",
     storeEnabled: true,
     explicitLevels: ["sfw", "nsfw", "ultra"],
+    useCases: [
+      "Editorial streetwear",
+      "Moody portrait series",
+      "Subtle NSFW teasing",
+    ],
   },
   {
     id: "fn_meka",
@@ -181,6 +222,11 @@ export const MUSES: MuseProfile[] = [
     preview: "/muses/fn_meka.png",
     storeEnabled: true,
     explicitLevels: ["sfw", "nsfw", "ultra"],
+    useCases: [
+      "Performance posters",
+      "Concert recap reels",
+      "Streetwear promo packs",
+    ],
   },
   {
     id: "hairy_ai_guys",
@@ -199,5 +245,10 @@ export const MUSES: MuseProfile[] = [
     preview: "/muses/hairy_ai_guys.png",
     storeEnabled: true,
     explicitLevels: ["sfw", "nsfw", "ultra"],
+    useCases: [
+      "Body-positive portrait sets",
+      "Mature NSFW campaigns",
+      "Fan-requested customs",
+    ],
   },
 ];
