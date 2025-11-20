@@ -1,32 +1,73 @@
+"use client";
+
 import Image from "next/image";
 import type { MuseProfile } from "@/muses/data";
 
-type MuseCardProps = {
+type Props = {
   muse: MuseProfile;
 };
 
-// Selection handlers removed until Muse Detail flow is available.
-export default function MuseCard({ muse }: MuseCardProps) {
+export default function MuseCard({ muse }: Props) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-4 shadow-lg">
-      <div className="aspect-[4/3] overflow-hidden rounded-xl bg-gradient-to-br from-purple-900/40 to-pink-900/30">
+    <div
+      className="
+        w-full rounded-xl overflow-hidden bg-zinc-900 border border-zinc-700
+        hover:border-fuchsia-400 hover:shadow-fuchsia-500/30 
+        hover:shadow-xl hover:-translate-y-1
+        transition-all duration-300 cursor-pointer
+        animate-fadeIn
+      "
+    >
+      {/* IMAGE */}
+      <div className="relative w-full aspect-[4/5]">
         <Image
           src={muse.preview}
           alt={muse.label}
-          width={800}
-          height={600}
-          className="h-full w-full object-cover"
+          fill
+          className="object-cover"
+          sizes="100%"
         />
       </div>
-      <div className="mt-4 space-y-1">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white">{muse.label}</h3>
-          <span className="rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-wide text-purple-100">
-            {muse.platform}
-          </span>
+
+      {/* BODY */}
+      <div className="p-4">
+
+        <div className="text-xl font-bold mb-1">{muse.label}</div>
+
+        <p className="text-sm text-zinc-400 mb-2">
+          {muse.description}
+        </p>
+
+        {/* USE CASES */}
+        <div className="mt-2">
+          <div className="font-semibold text-xs text-zinc-200">
+            Ideal Use Cases:
+          </div>
+          <ul className="text-xs text-zinc-400 list-disc ml-4 mt-1">
+            {muse.useCases?.map((u) => (
+              <li key={u}>{u}</li>
+            ))}
+          </ul>
         </div>
-        <p className="text-sm text-gray-300">{muse.description}</p>
-        <p className="text-sm font-semibold text-purple-200">{muse.estRevenue}</p>
+
+        {/* COMPATIBILITY BADGES */}
+        <div className="flex gap-2 mt-3 flex-wrap">
+          {muse.explicitLevels.includes("sfw") && (
+            <span className="px-2 py-0.5 text-xs rounded border border-green-400 text-green-300">
+              SFW
+            </span>
+          )}
+          {muse.explicitLevels.includes("nsfw") && (
+            <span className="px-2 py-0.5 text-xs rounded border border-yellow-400 text-yellow-300">
+              NSFW
+            </span>
+          )}
+          {muse.explicitLevels.includes("ultra") && (
+            <span className="px-2 py-0.5 text-xs rounded border border-red-500 text-red-300">
+              ULTRA
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
