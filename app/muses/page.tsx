@@ -7,6 +7,8 @@ import Link from "next/link";
 export default function MusesLanding() {
   const muses: MuseProfile[] = MUSES;
 
+  // Selection callbacks are disabled until Muse Detail flow is added.
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black text-white">
       {/* Header */}
