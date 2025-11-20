@@ -1,5 +1,6 @@
 'use client';
 
+import type { ChangeEvent, Dispatch, DragEvent, SetStateAction } from 'react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -39,6 +40,21 @@ export default function GeneratePage() {
   const maxRefs = (tier as string) === 'OG' ? 10 : (tier as string) === 'Eternal' ? 5 : (tier as string) === 'Starter' ? 1 : 0;
   const canVid = (tier as string) === 'Eternal' || (tier as string) === 'OG';
 
+  const processImages = (
+    files: FileList | File[],
+    limit: number,
+    current: number,
+    addImages: Dispatch<SetStateAction<string[]>>
+  ) => {
+    const accepted = Array.from(files)
+      .filter(f => f.type.startsWith('image/'))
+      .slice(0, limit - current);
+
+    if (!accepted.length) return;
+
+    accepted.forEach(file => addImages(prev => [...prev, URL.createObjectURL(file)]));
+  };
+
   useEffect(() => {
     fetch('/api/vaults')
       .then(r => r.json())
@@ -71,18 +87,32 @@ export default function GeneratePage() {
     }
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (refImages.length >= maxRefs) return;
-    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')).slice(0, maxRefs - refImages.length);
-    files.forEach(f => setRefImages(p => [...p, URL.createObjectURL(f)]));
+
+    processImages(e.dataTransfer.files, maxRefs, refImages.length, setRefImages);
   };
 
-  const handleLoraDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleRefSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || refImages.length >= maxRefs) return;
+
+    processImages(e.target.files, maxRefs, refImages.length, setRefImages);
+    e.target.value = '';
+  };
+
+  const handleLoraDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (loraImages.length >= 20) return;
-    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')).slice(0, 20 - loraImages.length);
-    files.forEach(f => setLoraImages(p => [...p, URL.createObjectURL(f)]));
+
+    processImages(e.dataTransfer.files, 20, loraImages.length, setLoraImages);
+  };
+
+  const handleLoraSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || loraImages.length >= 20) return;
+
+    processImages(e.target.files, 20, loraImages.length, setLoraImages);
+    e.target.value = '';
   };
 
   const handleGenerate = async () => {
@@ -231,18 +261,47 @@ export default function GeneratePage() {
             </div>
 
             {mode.includes('img') && (
-              <div
-                onDrop={handleDrop}
-                onDragOver={e => e.preventDefault()}
-                className="border-2 border-dashed border-purple-500 rounded-lg p-8 text-center cursor-pointer hover:border-pink-500 transition"
-              >
-                <p className="text-purple-400 font-medium">Drop Ref Images ({refImages.length}/{maxRefs})</p>
-                <div className="mt-4 grid grid-cols-3 md:grid-cols-5 gap-3">
-                  {refImages.map((url, i) => (
-                    <div key={i} className="relative group">
-                      <Image src={url} alt="Ref" width={80} height={80} className="w-full h-20 object-cover rounded-lg shadow-md group-hover:scale-110 transition" />
-                    </div>
-                  ))}
+              <div>
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                  <p className="text-purple-400 font-medium">Drop or upload reference images ({refImages.length}/{maxRefs})</p>
+                  <div className="flex items-center gap-2">
+                    <label
+                      htmlFor="ref-upload"
+                      className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-sm font-bold cursor-pointer hover:scale-105 transition"
+                    >
+                      Upload
+                    </label>
+                    <input
+                      id="ref-upload"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleRefSelect}
+                      className="hidden"
+                    />
+                  </div>
+                </div>
+
+                <div
+                  onDrop={handleDrop}
+                  onDragOver={e => e.preventDefault()}
+                  className="border-2 border-dashed border-purple-500 rounded-lg p-8 text-center cursor-pointer hover:border-pink-500 transition"
+                >
+                  <p className="text-purple-300">Drag images here to guide the generation</p>
+                  <div className="mt-4 grid grid-cols-3 md:grid-cols-5 gap-3">
+                    {refImages.map((url, i) => (
+                      <div key={i} className="relative group">
+                        <Image src={url} alt="Ref" width={80} height={80} className="w-full h-20 object-cover rounded-lg shadow-md group-hover:scale-110 transition" />
+                        <button
+                          onClick={() => setRefImages(p => p.filter((_, idx) => idx !== i))}
+                          className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 text-xs opacity-0 group-hover:opacity-100"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                    {!refImages.length && <p className="col-span-full text-gray-400">No reference images added yet.</p>}
+                  </div>
                 </div>
               </div>
             )}
@@ -285,41 +344,60 @@ export default function GeneratePage() {
             </p>
           </div>
 
-          <div
-            onDrop={handleLoraDrop}
-            onDragOver={e => e.preventDefault()}
-            className="border-2 border-dashed border-yellow-500 rounded-2xl p-10 text-center cursor-pointer hover:border-orange-500 transition mt-6"
-          >
-            <p className="text-yellow-400 text-xl font-bold mb-4">DROP 10–20 IMAGES ({loraImages.length}/20)</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-6">
-              <div className="bg-gray-900/70 p-4 rounded-lg border border-purple-500">
-                <p className="font-bold text-purple-400">10× CLOSE-UP</p>
-                <p className="text-gray-400">Face only</p>
-              </div>
-              <div className="bg-gray-900/70 p-4 rounded-lg border border-purple-500">
-                <p className="font-bold text-purple-400">5× MID-SHOT</p>
-                <p className="text-gray-400">Chest up</p>
-              </div>
-              <div className="bg-gray-900/70 p-4 rounded-lg border border-purple-500">
-                <p className="font-bold text-purple-400">5× FULL-BODY</p>
-                <p className="text-gray-400">Pose variety</p>
-              </div>
+          <div>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-yellow-400 text-xl font-bold">Drop or upload 10–20 images ({loraImages.length}/20)</p>
+              <label
+                htmlFor="lora-upload"
+                className="px-4 py-2 bg-gradient-to-r from-orange-600 to-yellow-500 rounded-full text-sm font-bold cursor-pointer hover:scale-105 transition"
+              >
+                Upload
+              </label>
+              <input
+                id="lora-upload"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleLoraSelect}
+                className="hidden"
+              />
             </div>
-            <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
-              {loraImages.map((url, i) => (
-                <div key={i} className="relative group">
-                  <Image src={url} alt="LoRA" width={100} height={100} className="w-full h-24 object-cover rounded-lg shadow-lg border-2 border-yellow-500/50 group-hover:scale-110 transition" />
-                  <button
-                    onClick={() => setLoraImages(p => p.filter((_, idx) => idx !== i))}
-                    className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 text-xs opacity-0 group-hover:opacity-100"
-                  >
-                    ×
-                  </button>
+
+            <div
+              onDrop={handleLoraDrop}
+              onDragOver={e => e.preventDefault()}
+              className="border-2 border-dashed border-yellow-500 rounded-2xl p-10 text-center cursor-pointer hover:border-orange-500 transition mt-6"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-6">
+                <div className="bg-gray-900/70 p-4 rounded-lg border border-purple-500">
+                  <p className="font-bold text-purple-400">10× CLOSE-UP</p>
+                  <p className="text-gray-400">Face only</p>
                 </div>
-              ))}
-              {Array.from({ length: 20 - loraImages.length }).map((_, i) => (
-                <div key={`empty-${i}`} className="w-full h-24 bg-gray-800 rounded-lg border-2 border-dashed border-gray-600" />
-              ))}
+                <div className="bg-gray-900/70 p-4 rounded-lg border border-purple-500">
+                  <p className="font-bold text-purple-400">5× MID-SHOT</p>
+                  <p className="text-gray-400">Chest up</p>
+                </div>
+                <div className="bg-gray-900/70 p-4 rounded-lg border border-purple-500">
+                  <p className="font-bold text-purple-400">5× FULL-BODY</p>
+                  <p className="text-gray-400">Pose variety</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
+                {loraImages.map((url, i) => (
+                  <div key={i} className="relative group">
+                    <Image src={url} alt="LoRA" width={100} height={100} className="w-full h-24 object-cover rounded-lg shadow-lg border-2 border-yellow-500/50 group-hover:scale-110 transition" />
+                    <button
+                      onClick={() => setLoraImages(p => p.filter((_, idx) => idx !== i))}
+                      className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 text-xs opacity-0 group-hover:opacity-100"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                {Array.from({ length: 20 - loraImages.length }).map((_, i) => (
+                  <div key={`empty-${i}`} className="w-full h-24 bg-gray-800 rounded-lg border-2 border-dashed border-gray-600" />
+                ))}
+              </div>
             </div>
           </div>
 
