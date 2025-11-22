@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useMuseStore } from "@/app/stores/useMuseStore";
 
 interface GenerateResponse {
   url?: string;
@@ -10,8 +9,6 @@ interface GenerateResponse {
 }
 
 export default function GeneratePage() {
-  const selectedMuse = useMuseStore((state) => state.selectedMuse);
-
   const [prompt, setPrompt] = useState("");
   const [result, setResult] = useState<GenerateResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -28,8 +25,7 @@ export default function GeneratePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          prompt,
-          muse: selectedMuse ? selectedMuse.slug : null
+          prompt
         })
       });
 
@@ -53,31 +49,10 @@ export default function GeneratePage() {
       <div className="space-y-2 text-center">
         <p className="text-sm uppercase tracking-[0.3em] text-gray-400">Sirens Forge</p>
         <h1 className="text-4xl font-bold">Generate</h1>
-        <p className="text-gray-500">
-          Craft a prompt, select your muse, and summon a result using the synchronous generator.
-        </p>
+        <p className="text-gray-500">Craft a prompt and summon a result using the synchronous generator.</p>
       </div>
 
       <div className="rounded-2xl border border-gray-200 bg-white/80 p-6 shadow-sm">
-        <div className="mb-4 flex items-center justify-between gap-2">
-          <div>
-            <p className="text-xs font-semibold uppercase text-gray-500">Muse</p>
-            <p className="text-lg font-semibold text-gray-900">
-              {selectedMuse ? selectedMuse.name : "No muse selected"}
-            </p>
-            {selectedMuse ? (
-              <p className="text-sm text-gray-500">Slug: {selectedMuse.slug}</p>
-            ) : (
-              <p className="text-sm text-gray-500">Choose a muse to personalize the output.</p>
-            )}
-          </div>
-          {selectedMuse && (
-            <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
-              {selectedMuse.archetype}
-            </span>
-          )}
-        </div>
-
         <label className="mb-2 block text-sm font-semibold text-gray-700" htmlFor="prompt">
           Prompt
         </label>
