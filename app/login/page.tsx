@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabaseAuth";
 
@@ -11,7 +11,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const supabase = createSupabaseBrowserClient();
+  const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -27,6 +27,28 @@ export default function LoginPage() {
 
     if (error) {
       setError(error.message);
+      return;
+    }
+
+    const { data: userData } = await supabase.auth.getUser();
+    const authedUser = userData.user;
+
+    if (!authedUser) {
+      setError("Unable to load your account. Please try again.");
+      return;
+    }
+
+    if (!authedUser.user_metadata?.first_login) {
+      await supabase.auth.updateUser({
+        data: {
+          ...authedUser.user_metadata,
+          first_login: new Date().toISOString(),
+        },
+      });
+    }
+
+    if (authedUser.user_metadata?.password_reset_required) {
+      router.push("/auth/reset");
       return;
     }
 

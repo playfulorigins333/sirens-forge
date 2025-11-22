@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useProtectedUser } from '@/lib/useProtectedUser';
 
 export default function ForgePage() {
   const router = useRouter();
+  const { user, loading } = useProtectedUser();
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
     name: '',
@@ -70,6 +72,14 @@ export default function ForgePage() {
     alert(`"${formData.name}" is LIVE. Empire unlocked.`);
     router.push('/vault');
   };
+
+  if (loading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+        Checking access…
+      </div>
+    );
+  }
 
   const InfoIcon = ({ text }: { text: string }) => (
     <div className="group relative inline-block ml-2">
