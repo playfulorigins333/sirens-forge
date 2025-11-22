@@ -79,6 +79,25 @@ export default function HomePage() {
         <p className="text-lg text-gray-400">
           No credit card. Start free. Upgrade anytime.
         </p>
+
+        {process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview' && (
+          <a
+            href="/dev-login"
+            style={{
+              display: 'block',
+              marginTop: '2rem',
+              padding: '1rem',
+              background: '#6122ff',
+              borderRadius: '10px',
+              color: 'white',
+              textAlign: 'center',
+              fontSize: '1.2rem',
+              fontWeight: 600,
+            }}
+          >
+            🚀 DEV LOGIN (Preview Only)
+          </a>
+        )}
       </div>
 
       <style jsx>{`
