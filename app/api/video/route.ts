@@ -1,70 +1,48 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server"
 
-export async function POST(req: NextRequest) {
-  try {
-    const { prompt, imageUrl } = await req.json();
+const RUNPOD_API_KEY = process.env.RUNPOD_API_KEY
+const RUNPOD_ENDPOINT = process.env.RUNPOD_VIDEO_ENDPOINT
 
-    if (!prompt || typeof prompt !== "string") {
-      return NextResponse.json(
-        { success: false, error: "Prompt is required for video generation." },
-        { status: 400 }
-      );
-    }
-
-    const backendId = process.env.RUNPOD_BACKEND_ID;
-    const apiKey = process.env.RUNPOD_API_KEY;
-
-    if (!backendId || !apiKey) {
-      return NextResponse.json(
-        { success: false, error: "RunPod backend is not configured." },
-        { status: 500 }
-      );
-    }
-
-    const payload = {
-      input: {
-        mode: "video",
-        prompt,
-        ...(imageUrl ? { imageUrl } : {}),
-      },
-    };
-
-    const response = await fetch(`https://api.runpod.ai/v2/${backendId}/runsync`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("RunPod video generation failed:", errorText);
-      return NextResponse.json(
-        { success: false, error: "RunPod request failed." },
-        { status: response.status }
-      );
-    }
-
-    const data = await response.json();
-    const videoUrl =
-      data?.output?.url ||
-      data?.output?.videoUrl ||
-      data?.output?.[0] ||
-      data?.url;
-
-    if (!videoUrl || typeof videoUrl !== "string") {
-      return NextResponse.json(
-        { success: false, error: "Video URL not returned from RunPod." },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({ success: true, url: videoUrl });
-  } catch (error) {
-    console.error("Video generation error:", error);
-    const message = error instanceof Error ? error.message : "Unexpected error";
-    return NextResponse.json({ success: false, error: message }, { status: 500 });
+export async function POST(req: Request) {
+  if (!RUNPOD_API_KEY || !RUNPOD_ENDPOINT) {
+    return NextResponse.json({ error: "RunPod backend is not configured" }, { status: 500 })
   }
+
+  const body = await req.json()
+  const { prompt, mode, imageBase64 } = body
+
+  if (!prompt || !mode) {
+    return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+  }
+
+  const payload =
+    mode === "image-to-video"
+      ? {
+          input: {
+            prompt,
+            image: imageBase64
+          }
+        }
+      : {
+          input: {
+            prompt
+          }
+        }
+
+  const response = await fetch(RUNPOD_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${RUNPOD_API_KEY}`
+    },
+    body: JSON.stringify(payload)
+  })
+
+  const data = await response.json()
+
+  if (!response.ok) {
+    return NextResponse.json({ error: data }, { status: 500 })
+  }
+
+  return NextResponse.json({ result: data })
 }
